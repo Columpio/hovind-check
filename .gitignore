@@ -1,1 +1,14 @@
-resources
+# Private materials: videos, chat export, full transcripts. Never commit.
+resources/
+
+# Build and dependencies
+node_modules/
+dist/
+.astro/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.explyt/
