@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/literata';
+import '@fontsource-variable/golos-text';
+import '../styles/global.css';
+interface Props { title?: string; description?: string; section?: 'lectures' | 'arguments' | 'rhetoric' | 'about'; }
+const {
+  title,
+  section,
+  description = 'Подробный разбор лекций Кента Ховинда с точки зрения науки: тайм-коды, оценки и простые объяснения.',
+} = Astro.props;
+const base = import.meta.env.BASE_URL;
+const fullTitle = title ? `${title} — Семинар Ховинда: проверка фактов` : 'Семинар Ховинда: проверка фактов';
+const nav = [
+  { id: 'lectures', href: `${base}lectures/`, label: 'Лекции' },
+  { id: 'arguments', href: `${base}arguments/`, label: 'Доводы' },
+  { id: 'rhetoric', href: `${base}rhetoric/`, label: 'Приёмы' },
+  { id: 'about', href: `${base}about/`, label: 'О проекте' },
+];
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <title>{fullTitle}</title>
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>
+      (function () {
+        var t = localStorage.getItem('hc-theme');
+        if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#content">Перейти к содержанию</a>
+    <header class="site">
+      <div class="wrap">
+        <a class="brand" href={base}>
+          <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M8 17l5 5 11-12" fill="none" stroke="var(--accent-ink)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Семинар Ховинда<small>проверка фактов</small></span>
+        </a>
+        <nav aria-label="Разделы сайта">
+          {nav.map((n) => <a href={n.href} aria-current={section === n.id ? 'page' : undefined}>{n.label}</a>)}
+          <button type="button" class="theme-btn" id="theme-btn" aria-label="Переключить тёмную тему" title="Светлая / тёмная тема">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main id="content"><slot /></main>
+    <footer class="site">
+      <div class="wrap">
+        Некоммерческий образовательный проект христиан разных церквей. Права на лекции принадлежат правообладателям —
+        <a href={`${base}about/#prava`}>подробнее</a>. Наши тексты — CC BY-SA 4.0, код — MIT,
+        <a href="https://github.com/Columpio/hovind-check">исходники на GitHub</a>.
+      </div>
+    </footer>
+    <button type="button" class="to-top" id="to-top" aria-label="Наверх" title="Наверх">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+    </button>
+    <script>
+      const themeBtn = document.getElementById('theme-btn')!;
+      themeBtn.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('hc-theme', next);
+      });
+      const toTop = document.getElementById('to-top')!;
+      addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 600), { passive: true });
+      toTop.addEventListener('click', () => scrollTo({ top: 0 }));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import CatalogList from '../../components/CatalogList.astro';
+---
+<Base title="Каталог доводов" section="arguments">
+  <div class="wrap narrow">
+    <h1>Каталог доводов Ховинда</h1>
+    <p class="lead">
+      Ховинд повторяет одни и те же доводы в разных лекциях. Здесь у каждого есть короткий ответ. Сверху — те, что
+      звучат чаще всего: скорее всего, именно их вы и услышите в споре.
+    </p>
+    <CatalogList kind="arguments" />
+  </div>
+</Base>

@@ -1,0 +1,95 @@
+# Сведения о лекциях и видео. Источник данных: research/videos.md.
+# Время в разметке (claims.yaml) — по локальному файлу = по YouTube-загрузке из имени файла.
+# offset (секунды): время на площадке = время лекции + offset.
+# offsets: кусочное смещение — список {from, offset}; действует последний пункт с from <= время лекции.
+- slug: lecture-1
+  number: 1
+  title: "Возраст Земли"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 1"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  youtube: { id: YXHGTPGcnzE, channel: "kornel Zastavnetchi", offset: 0 }
+  rutube: { id: 787b154918c923c60aeaf1ad53b86103, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # пробные данные в claims.yaml
+
+- slug: lecture-2
+  number: 2
+  title: "Эдемский сад"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 2"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  # Исходная загрузка GEahxWOYeQ8 удалена YouTube; замена, смещение по звуку не проверено.
+  youtube: { id: g-7cnkhgAjg, channel: "Дмитрий Слепухин", offset: 0 }
+  rutube: { id: 6d0724237d129ed5952b3757302c6d2f, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lecture-3
+  number: 3
+  title: "Динозавры и Библия"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 3"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  youtube: { id: 5b-4Aj2bt5c, channel: "kornel Zastavnetchi", offset: 0 }
+  rutube: { id: 4092114c8f50e49c6935eb5035598727, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lecture-4
+  number: 4
+  title: "Что находится в учебниках"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 4"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  youtube: { id: scPVRG6Zwbc, channel: "kornel Zastavnetchi", offset: 0 }
+  rutube: { id: cc09db10bdc81c4b28ba24502617c5f3, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lecture-5
+  number: 5
+  title: "Опасность теории эволюции"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 5"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  youtube: { id: S0XiCBdEQao, channel: "kornel Zastavnetchi", offset: 0 }
+  rutube: { id: f3b6745c5f1bf4ece401620d290e3dd2, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lecture-6
+  number: 6
+  title: "Теория Ховинда"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 6"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  youtube: { id: 53GssR9DqMA, channel: "kornel Zastavnetchi", offset: 0 }
+  rutube: { id: de59492fd40fd7a34e5b3d2313424d46, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lecture-7
+  number: 7
+  title: "Вопросы и ответы"
+  author: "Кент Ховинд (Kent Hovind)"
+  source: "Семинар о сотворении, лекция 7"
+  voiceover: "Русская озвучка (переводчик неизвестен)"
+  rights: "Kent Hovind / Creation Science Evangelism"
+  # Исходная загрузка jlpLRQOotTg удалена YouTube; замена, смещение по звуку не проверено.
+  youtube: { id: e3mSkSpmSYE, channel: "Mr.Synel`nikoff", offset: 0 }
+  rutube: { id: 6334913d7bfeacb45f2cdeb1817bae43, channel: "Библиотека христианских материалов", offset: 0 }
+
+- slug: lies-in-the-name-of-science
+  number: 8
+  title: "«Ложь во имя науки»"
+  kind: film
+  author: "А. Иванов (фильм, 2010); использованы фрагменты выступлений Кента Ховинда"
+  source: "Документальный фильм «Ложь во имя науки», полная версия от автора"
+  voiceover: "Русский язык"
+  rights: "автор фильма (А. Иванов)"
+  youtube: { id: xrGvc6wMEvk, channel: "Alexandr Ivanov", offset: 0 }
+  # На RuTube другая редакция фильма: смещение меняется по участкам (измерено по звуку).
+  rutube:
+    id: d20a62967ab9ae1005e9b0949c589f79
+    offsets:
+      - { from: 0, offset: 0.3 }
+      - { from: 600, offset: -22.4 }
+      - { from: 1300, offset: -15.3 }
+      - { from: 2000, offset: -7.1 }
+      - { from: 2950, offset: -3.1 }

@@ -1,0 +1,71 @@
+---
+import RatingIcon from './RatingIcon.astro';
+import { RATINGS, formatTime, timeFragment, md, type Claim, type Article } from '../lib/data';
+interface Props {
+  claim: Claim;
+  argumentsBySlug: Map<string, Article>;
+  rhetoricBySlug: Map<string, Article>;
+}
+const { claim, argumentsBySlug, rhetoricBySlug } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const rating = RATINGS[claim.rating];
+const frag = timeFragment(claim.start);
+const missing = (slug: string): Article => ({ slug, title: slug, summary: '', html: '' });
+const args = (claim.arguments ?? []).map((s) => argumentsBySlug.get(s) ?? missing(s));
+const rhet = (claim.rhetoric ?? []).map((s) => rhetoricBySlug.get(s) ?? missing(s));
+---
+<details
+  class={`claim r-${claim.rating}`}
+  id={`t=${frag}`}
+  data-rating={claim.rating}
+  data-start={claim.start}
+  data-end={claim.end}
+  data-frag={frag}
+  open={claim.rating !== 'neutral'}
+>
+  <summary>
+    <span class="claim-head">
+      <button type="button" class="tc" data-seek={claim.start} aria-label={`Включить видео с ${formatTime(claim.start)}`}>
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>
+        {formatTime(claim.start)}–{formatTime(claim.end)}
+      </button>
+      <span class={`rating-pill ${claim.rating}`}><RatingIcon rating={claim.rating} />{rating.label}</span>
+      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </span>
+    <span class="quote">{claim.text}</span>
+  </summary>
+  <div class="claim-body">
+    <p class="verdict">{claim.verdict}</p>
+    {claim.details && (
+      <details class="more">
+        <summary>Подробнее</summary>
+        <div class="prose" set:html={md(claim.details)} />
+      </details>
+    )}
+    {args.map((a) => (
+      <aside class="inset" aria-label={`Повторяющийся довод: ${a.title}`}>
+        <div class="inset-label">Повторяющийся довод: <a href={`${base}arguments/${a.slug}/`}>{a.title}</a></div>
+        {a.summary && <p class="inset-summary">{a.summary}</p>}
+        {a.html && (
+          <details class="more">
+            <summary>Разбор довода</summary>
+            <div class="prose" set:html={a.html} />
+          </details>
+        )}
+      </aside>
+    ))}
+    {rhet.length > 0 && (
+      <div class="rhet">
+        {rhet.map((r) => (
+          <a class="chip" href={`${base}rhetoric/${r.slug}/`} title={r.summary}>Риторический приём:<b>{r.title}</b></a>
+        ))}
+      </div>
+    )}
+    <div class="claim-actions">
+      <button type="button" class="btn copy" data-frag={frag}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+        Скопировать ссылку
+      </button>
+    </div>
+  </div>
+</details>

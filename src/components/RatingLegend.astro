@@ -1,0 +1,18 @@
+---
+import RatingIcon from './RatingIcon.astro';
+import { RATINGS, type Rating } from '../lib/data';
+---
+<dl class="legend-list">
+  {(Object.keys(RATINGS) as Rating[]).map((r) => (
+    <div>
+      <dt><span class={`rating-pill ${r}`}><RatingIcon rating={r} />{RATINGS[r].label}</span></dt>
+      <dd>{RATINGS[r].hint}</dd>
+    </div>
+  ))}
+</dl>
+<style>
+  .legend-list { display: grid; gap: 8px; margin: 0; }
+  .legend-list div { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .legend-list dt { flex: none; min-width: 13rem; }
+  .legend-list dd { margin: 0; color: var(--ink-2); }
+</style>

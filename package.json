@@ -1,0 +1,23 @@
+{
+  "name": "hovind-check",
+  "version": "1.0.0",
+  "description": "Семинар Ховинда: проверка фактов",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Columpio/hovind-check.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource-variable/golos-text": "^5.3.0",
+    "@fontsource-variable/literata": "^5.3.0",
+    "astro": "^7.4.4",
+    "marked": "^18.1.2",
+    "yaml": "^2.9.1"
+  },
+  "type": "module"
+}

@@ -1,0 +1,37 @@
+---
+import { withFrequency } from '../lib/data';
+interface Props { kind: 'arguments' | 'rhetoric'; }
+const { kind } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const items = withFrequency(kind);
+const noun = kind === 'arguments' ? 'довод' : 'приём';
+---
+<label class="sr-only" for="catalog-search">Поиск</label>
+<input class="search" id="catalog-search" type="search" placeholder={`Найти ${noun}: например, «Луна»`} autocomplete="off" />
+<ol class="freq" id="catalog">
+  {items.map(({ article, count }) => (
+    <li data-text={`${article.title} ${article.summary}`.toLowerCase()}>
+      <span class="count">{count}<small>раз</small></span>
+      <div>
+        <a href={`${base}${kind}/${article.slug}/`}>{article.title}</a>
+        <p>{article.summary}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+<p class="meta" id="catalog-empty" hidden>Ничего не нашлось. Попробуйте другое слово.</p>
+<script>
+  const input = document.getElementById('catalog-search') as HTMLInputElement;
+  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('#catalog li'));
+  const empty = document.getElementById('catalog-empty')!;
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    let shown = 0;
+    rows.forEach((r) => {
+      const ok = !q || (r.dataset.text ?? '').includes(q);
+      r.hidden = !ok;
+      if (ok) shown++;
+    });
+    empty.hidden = shown > 0;
+  });
+</script>

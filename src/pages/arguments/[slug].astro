@@ -1,0 +1,9 @@
+---
+import ArticlePage from '../../components/ArticlePage.astro';
+import { getArguments } from '../../lib/data';
+export function getStaticPaths() {
+  return getArguments().map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+const { article } = Astro.props;
+---
+<ArticlePage kind="arguments" article={article} />

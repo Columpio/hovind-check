@@ -1,0 +1,185 @@
+---
+import { offsetSteps, type Lecture } from '../lib/data';
+interface Props { lecture: Lecture; }
+const { lecture } = Astro.props;
+const hasYT = Boolean(lecture.youtube?.id);
+const hasRT = Boolean(lecture.rutube?.id);
+---
+<div
+  class="player"
+  id="player"
+  data-yt-id={lecture.youtube?.id ?? ''}
+  data-yt-offsets={JSON.stringify(offsetSteps(lecture.youtube))}
+  data-rt-id={lecture.rutube?.id ?? ''}
+  data-rt-offsets={JSON.stringify(offsetSteps(lecture.rutube))}
+>
+  <div class="player-frame"><div id="player-slot"></div></div>
+  <div class="player-bar">
+    <div class="switch" role="group" aria-label="Откуда смотреть видео">
+      <button type="button" data-platform="youtube" disabled={!hasYT} aria-pressed="false">YouTube</button>
+      <button type="button" data-platform="rutube" disabled={!hasRT} aria-pressed="false" title={hasRT ? 'RuTube' : 'Копия на RuTube пока не найдена'}>RuTube</button>
+    </div>
+    <span class="spacer"></span>
+    <button type="button" class="btn" id="to-current" title="Прокрутить разбор к тому, что сейчас звучит">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
+      <span class="long">К текущему моменту</span><span class="short">Сейчас звучит</span>
+    </button>
+  </div>
+  <p class="player-note">Нажмите на время у любого утверждения, и видео включится с этого места.</p>
+</div>
+
+<script>
+  type PlatformName = 'youtube' | 'rutube';
+  interface Engine {
+    seek(t: number): void;
+    current(): number | null;
+    destroy(): void;
+  }
+
+  const root = document.getElementById('player') as HTMLElement;
+  const slotHost = root.querySelector('.player-frame') as HTMLElement;
+  const ids: Record<PlatformName, string> = { youtube: root.dataset.ytId ?? '', rutube: root.dataset.rtId ?? '' };
+  type Step = { from: number; offset: number };
+  const steps: Record<PlatformName, Step[]> = {
+    youtube: JSON.parse(root.dataset.ytOffsets || '[]'),
+    rutube: JSON.parse(root.dataset.rtOffsets || '[]'),
+  };
+  /** Время лекции → время на площадке. */
+  function toPlatform(p: PlatformName, t: number): number {
+    let off = 0;
+    for (const s of steps[p]) if (s.from <= t) off = s.offset;
+    return Math.max(0, t + off);
+  }
+  /** Время на площадке → время лекции (ступень ищем по уже сдвинутым границам). */
+  function fromPlatform(p: PlatformName, t: number): number {
+    let off = 0;
+    for (const s of steps[p]) if (s.from + s.offset <= t) off = s.offset;
+    return t - off;
+  }
+
+  let platform: PlatformName = 'youtube';
+  let engine: Engine | null = null;
+  let pendingSeek: number | null = null;
+
+  function freshSlot(): HTMLElement {
+    slotHost.innerHTML = '<div id="player-slot"></div>';
+    return slotHost.querySelector('#player-slot') as HTMLElement;
+  }
+
+  // --- YouTube IFrame API ---
+  let ytApi: Promise<void> | null = null;
+  function loadYT(): Promise<void> {
+    if (ytApi) return ytApi;
+    ytApi = new Promise((resolve) => {
+      const w = window as any;
+      if (w.YT?.Player) return resolve();
+      const prev = w.onYouTubeIframeAPIReady;
+      w.onYouTubeIframeAPIReady = () => { prev?.(); resolve(); };
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+    });
+    return ytApi;
+  }
+
+  function youtubeEngine(start: number, autoplay: boolean): Engine {
+    const slot = freshSlot();
+    let player: any = null;
+    let ready = false;
+    let queued: number | null = null;
+    loadYT().then(() => {
+      const YT = (window as any).YT;
+      player = new YT.Player(slot, {
+        videoId: ids.youtube,
+        playerVars: { start: Math.floor(start), autoplay: autoplay ? 1 : 0, rel: 0, playsinline: 1 },
+        events: {
+          onReady: () => {
+            ready = true;
+            if (queued !== null) { player.seekTo(queued, true); player.playVideo(); queued = null; }
+          },
+        },
+      });
+    });
+    return {
+      seek(t) {
+        if (ready) { player.seekTo(t, true); player.playVideo(); } else queued = t;
+      },
+      current() { return ready && player?.getCurrentTime ? player.getCurrentTime() : null; },
+      destroy() { try { player?.destroy(); } catch {} },
+    };
+  }
+
+  // --- RuTube (postMessage API) ---
+  function rutubeEngine(start: number, autoplay: boolean): Engine {
+    const slot = freshSlot();
+    const iframe = document.createElement('iframe');
+    const params = new URLSearchParams({ t: String(Math.floor(start)) });
+    if (autoplay) params.set('autoplay', 'true');
+    iframe.src = `https://rutube.ru/play/embed/${ids.rutube}?${params}`;
+    iframe.allow = 'clipboard-write; autoplay';
+    iframe.allowFullscreen = true;
+    iframe.setAttribute('frameborder', '0');
+    slot.replaceWith(iframe);
+    let time: number | null = null;
+    let ready = false;
+    let queued: number | null = null;
+    const send = (type: string, data: object = {}) =>
+      iframe.contentWindow?.postMessage(JSON.stringify({ type, data }), '*');
+    const onMsg = (e: MessageEvent) => {
+      if (e.source !== iframe.contentWindow) return;
+      let m: any;
+      try { m = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+      if (m?.type === 'player:ready' || m?.type === 'player:init') {
+        ready = true;
+        if (queued !== null) { send('player:setCurrentTime', { time: queued }); send('player:play'); queued = null; }
+      }
+      if (m?.type === 'player:currentTime') time = Number(m.data?.time);
+    };
+    window.addEventListener('message', onMsg);
+    return {
+      seek(t) {
+        if (ready) { send('player:setCurrentTime', { time: t }); send('player:play'); } else queued = t;
+      },
+      current() { return time; },
+      destroy() { window.removeEventListener('message', onMsg); },
+    };
+  }
+
+  function start(p: PlatformName, lectureTime: number, autoplay: boolean) {
+    const at = currentLectureTime() ?? lectureTime;
+    engine?.destroy();
+    platform = p;
+    localStorage.setItem('hc-platform', p);
+    root.querySelectorAll<HTMLButtonElement>('[data-platform]').forEach((b) => {
+      b.classList.toggle('active', b.dataset.platform === p);
+      b.setAttribute('aria-pressed', String(b.dataset.platform === p));
+    });
+    const platformTime = toPlatform(p, at);
+    engine = p === 'youtube' ? youtubeEngine(platformTime, autoplay) : rutubeEngine(platformTime, autoplay);
+  }
+
+  function currentLectureTime(): number | null {
+    const t = engine?.current();
+    return t == null || Number.isNaN(t) ? null : fromPlatform(platform, t);
+  }
+
+  /** Перейти к моменту лекции (секунды по разметке) и запустить видео. */
+  function seekLecture(t: number) {
+    if (!engine) { start(platform, t, true); return; }
+    engine.seek(toPlatform(platform, t));
+  }
+
+  const saved = localStorage.getItem('hc-platform') as PlatformName | null;
+  const available = (p: PlatformName) => Boolean(ids[p]);
+  platform = saved && available(saved) ? saved : available('youtube') ? 'youtube' : 'rutube';
+
+  root.querySelectorAll<HTMLButtonElement>('[data-platform]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const p = b.dataset.platform as PlatformName;
+      if (p !== platform && available(p)) start(p, 0, true);
+    }),
+  );
+
+  (window as any).hcPlayer = { seekLecture, currentLectureTime, init: (t: number, autoplay: boolean) => start(platform, t, autoplay) };
+  window.dispatchEvent(new Event('hc-player-ready'));
+</script>

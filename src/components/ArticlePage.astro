@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import RatingIcon from './RatingIcon.astro';
+import { occurrences, related, formatTime, timeFragment, lectureLabel, RATINGS, type Article } from '../lib/data';
+interface Props { kind: 'arguments' | 'rhetoric'; article: Article; }
+const { kind, article } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const occ = occurrences(kind, article.slug);
+const rel = related(kind, article.slug);
+const otherKind = kind === 'arguments' ? 'rhetoric' : 'arguments';
+const catalogTitle = kind === 'arguments' ? 'Каталог доводов' : 'Риторические приёмы';
+const relTitle = kind === 'arguments' ? 'Какие приёмы сопровождают этот довод' : 'В каких доводах встречается этот приём';
+---
+<Base title={article.title} description={article.summary} section={kind}>
+  <div class="wrap narrow">
+    <p class="meta"><a href={`${base}${kind}/`}>← {catalogTitle}</a></p>
+    <h1>{article.title}</h1>
+    <p class="lead">{article.summary}</p>
+    <div class="article-body prose" set:html={article.html} />
+
+    {rel.length > 0 && (
+      <>
+        <h2>{relTitle}</h2>
+        <ul class="rhet">
+          {rel.map(({ article: a, count }) => (
+            <li style="list-style:none"><a class="chip" href={`${base}${otherKind}/${a.slug}/`}>{a.title}<b>· {count}</b></a></li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    <h2>Где встречается в лекциях ({occ.length})</h2>
+    {occ.length === 0 ? (
+      <p class="meta">Пока не отмечено ни в одной лекции.</p>
+    ) : (
+      <ul class="occ">
+        {occ.map(({ lecture, claim }) => (
+          <li>
+            <span class="where">
+              <a href={`${base}lectures/${lecture.slug}/#t=${timeFragment(claim.start)}`}>
+                {lectureLabel(lecture)}, {formatTime(claim.start)}
+              </a>
+              <span class={`rating-pill ${claim.rating}`}><RatingIcon rating={claim.rating} />{RATINGS[claim.rating].label}</span>
+            </span>
+            <q>{claim.text}</q>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Base>

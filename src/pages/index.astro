@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import RatingLegend from '../components/RatingLegend.astro';
+import { getLectures, getClaims, lectureLabel } from '../lib/data';
+const base = import.meta.env.BASE_URL;
+const lectures = getLectures().map((l) => ({ ...l, n: getClaims(l.slug).length }));
+---
+<Base>
+  <div class="wrap narrow">
+    <h1>Семинар Ховинда: проверка фактов</h1>
+    <p class="lead">
+      Лекции Кента Ховинда о сотворении мира звучат убедительно, и многие им верят. Мы слушаем их вместе с вами,
+      проверяем каждое утверждение и простыми словами объясняем, что подтверждается, а что нет.
+    </p>
+    <p>
+      Мы христиане и не спорим с тем, что Бог — Творец. Мы проверяем научные доводы. <a href={`${base}about/`}>Кто мы и зачем это делаем</a>.
+    </p>
+
+    <h2>Лекции и фильм</h2>
+    <ul class="cards">
+      {lectures.map((l) => (
+        <li>
+          <a class="card" href={`${base}lectures/${l.slug}/`}>
+            <span class="t">{lectureLabel(l)}</span>
+            <span class="s">{l.n > 0 ? `Разобрано утверждений: ${l.n}` : 'Разбор готовится'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <h2>Спорите с кем-то?</h2>
+    <ul class="cards">
+      <li><a class="card" href={`${base}arguments/`}><span class="t">Каталог доводов</span><span class="s">Найдите довод собеседника и короткий ответ на него.</span></a></li>
+      <li><a class="card" href={`${base}rhetoric/`}><span class="t">Риторические приёмы</span><span class="s">Как убеждают без доказательств — на простых примерах.</span></a></li>
+    </ul>
+
+    <h2>Как читать оценки</h2>
+    <RatingLegend />
+  </div>
+</Base>
