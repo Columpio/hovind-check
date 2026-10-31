@@ -20,7 +20,7 @@
   source: "Семинар о сотворении, лекция 2"
   voiceover: "Русская озвучка (переводчик неизвестен)"
   rights: "Kent Hovind / Creation Science Evangelism"
-  # Исходная загрузка GEahxWOYeQ8 удалена YouTube; замена, смещение по звуку не проверено.
+  # Исходная загрузка GEahxWOYeQ8 удалена YouTube; замена, смещение по звуку +0,12 с (пренебрежимо).
   youtube: { id: g-7cnkhgAjg, channel: "Дмитрий Слепухин", offset: 0 }
   rutube: { id: 6d0724237d129ed5952b3757302c6d2f, channel: "Библиотека христианских материалов", offset: 0 }
 
@@ -71,7 +71,7 @@
   source: "Семинар о сотворении, лекция 7"
   voiceover: "Русская озвучка (переводчик неизвестен)"
   rights: "Kent Hovind / Creation Science Evangelism"
-  # Исходная загрузка jlpLRQOotTg удалена YouTube; замена, смещение по звуку не проверено.
+  # Исходная загрузка jlpLRQOotTg удалена YouTube; замена, смещение по звуку +0,23 с (пренебрежимо).
   youtube: { id: e3mSkSpmSYE, channel: "Mr.Synel`nikoff", offset: 0 }
   rutube: { id: 6334913d7bfeacb45f2cdeb1817bae43, channel: "Библиотека христианских материалов", offset: 0 }
 
