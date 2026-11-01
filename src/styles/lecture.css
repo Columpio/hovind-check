@@ -85,9 +85,19 @@
 .tc:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .claim-head .chev { margin-left: auto; color: var(--muted); transition: transform 0.2s; }
 .claim[open] .claim-head .chev { transform: rotate(180deg); }
-.quote { display: block; font-size: 1em; color: var(--ink); }
+.part-label {
+  display: block; margin-bottom: 4px;
+  font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.quote {
+  display: block; padding: 8px 12px; border-left: 3px solid var(--line); border-radius: 0 8px 8px 0;
+  background: var(--paper-2); font-style: italic; font-size: 1em; color: var(--ink);
+}
 .quote::before { content: '«'; color: var(--muted); }
 .quote::after { content: '»'; color: var(--muted); }
+.analysis-label { margin: 2px 0 6px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--c); }
+.claim.r-neutral:not([open]) .part-label { display: none; }
 .claim.r-neutral:not([open]) .quote { color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
 .claim-body { padding: 0 14px 14px; }
