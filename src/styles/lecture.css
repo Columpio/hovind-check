@@ -104,7 +104,7 @@
 .quote::after { content: '»'; color: var(--muted); }
 .analysis-label { margin: 2px 0 6px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--c); }
 .claim.r-neutral:not([open]) .part-label { display: none; }
-.claim.r-neutral:not([open]) .quote { color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.claim.r-neutral:not([open]) .quote { color: var(--ink-2); }
 
 .claim-body { padding: 0 14px 14px; }
 .verdict {
