@@ -16,7 +16,7 @@
 - Ars Technica, 19.09.2007: https://arstechnica.com/tech-policy/2007/09/dr-dino-uses-dmca-takedowns-on-critics-admits-to-mistakes/
 - Обзор изменений в формулировках: https://freethoughtblogs.com/pharyngula/2007/09/17/hovindian-revisionism/
 
-**Сейчас.** Страница `drdino.com/copyright` не существует (ответ 404). На главной drdino.com (сайт Dinosaur Adventure Land, Алабама) политики авторских прав нет. Тетрадь к семинару, 9-е издание 2007 года, содержит строку «Permission is granted to duplicate for free distribution only»: https://creationism.org/videos/KentHovind/HovindCollegeCourses_Notebook.pdf. Сам Ховинд в лекциях, по пересказу одного блога, предлагает свободно копировать его записи: https://richardsonstudies.com/2023/05/30/notes-commentary-on-kent-hovinds-7-part-creation-science-seminars/. Это нужно сверить с нашей расшифровкой лекции 3.
+**Сейчас.** Страница `drdino.com/copyright` не существует (ответ 404). На главной drdino.com (сайт Dinosaur Adventure Land, Алабама) политики авторских прав нет. Тетрадь к семинару, 9-е издание 2007 года, содержит строку «Permission is granted to duplicate for free distribution only»: https://creationism.org/videos/KentHovind/HovindCollegeCourses_Notebook.pdf. Сам Ховинд в лекциях, по пересказу одного блога, предлагает свободно копировать его записи: https://richardsonstudies.com/2023/05/30/notes-commentary-on-kent-hovinds-7-part-creation-science-seminars/. По нашей расшифровке это не лекция 3, а лекция 4 («Что находится в учебниках»), [2:19:18] локального файла (= YouTube scPVRG6Zwbc): «Кассеты — это прекрасные инструменты в евангелизации. Мои кассеты без авторского права. Перепишите их, раздавайте». Автоматическая расшифровка (GigaAM); перед цитированием прослушать.
 
 ## 2. Жалобы DMCA против критиков
 
