@@ -30,13 +30,6 @@ const ratings = (Object.keys(RATINGS) as Rating[])
         <span>{next && <a href={`${base}lectures/${next.slug}/`}>{lectureLabel(next)} →</a>}</span>
       </nav>
       <h1>{lectureLabel(lecture)}</h1>
-      <p class="meta">
-        {lecture.author}. {lecture.source}. {lecture.voiceover}.
-        {' '}Источник видео:
-        {lecture.youtube?.id && <> <a href={`https://www.youtube.com/watch?v=${lecture.youtube.id}`}>YouTube</a>{lecture.youtube.channel && ` (канал «${lecture.youtube.channel}»)`}</>}
-        {lecture.rutube?.id && <>, <a href={`https://rutube.ru/video/${lecture.rutube.id}/`}>RuTube</a>{lecture.rutube.channel && ` (канал «${lecture.rutube.channel}»)`}</>}.
-        {' '}Права: {lecture.rights}.
-      </p>
       {lecture.draft && <div class="draft-note">Пробная страница: тексты и тайм-коды условные, нужны, чтобы проверить работу сайта.</div>}
     </div>
 
@@ -68,6 +61,13 @@ const ratings = (Object.keys(RATINGS) as Rating[])
     </div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <p class="lecture-credits" slot="footer">
+    <b>Об этом видео.</b> {lecture.author}. {lecture.source}. {lecture.voiceover}.
+    {' '}Источник видео:
+    {lecture.youtube?.id && <> <a href={`https://www.youtube.com/watch?v=${lecture.youtube.id}`}>YouTube</a>{lecture.youtube.channel && ` (канал «${lecture.youtube.channel}»)`}</>}
+    {lecture.rutube?.id && <>, <a href={`https://rutube.ru/video/${lecture.rutube.id}/`}>RuTube</a>{lecture.rutube.channel && ` (канал «${lecture.rutube.channel}»)`}</>}.
+    {' '}Права: {lecture.rights}.
+  </p>
 </Base>
 
 <script>

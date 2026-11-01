@@ -55,6 +55,7 @@ const nav = [
     <main id="content"><slot /></main>
     <footer class="site">
       <div class="wrap">
+        <slot name="footer" />
         Некоммерческий образовательный проект христиан разных церквей. Права на лекции принадлежат правообладателям —
         <a href={`${base}about/#prava`}>подробнее</a>. Наши тексты — CC BY-SA 4.0, код — MIT,
         <a href="https://github.com/Columpio/hovind-check">исходники на GitHub</a>.
