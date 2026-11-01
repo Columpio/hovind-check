@@ -183,9 +183,3 @@ h3 { font-size: 1.15rem; }
 }
 .to-top.show { opacity: 1; pointer-events: auto; }
 
-.toast {
-  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 40;
-  background: var(--ink); color: var(--paper); font-family: var(--font-ui); font-size: 0.95rem;
-  padding: 10px 18px; border-radius: 999px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translate(-50%, 0); }

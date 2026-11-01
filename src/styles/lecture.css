@@ -83,7 +83,13 @@
   border: 1px solid var(--line); border-radius: 8px; background: var(--paper-2); color: var(--accent);
 }
 .tc:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.claim-head .chev { margin-left: auto; color: var(--muted); transition: transform 0.2s; }
+.claim-head .anchor {
+  margin-left: auto; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px;
+  color: var(--muted); opacity: 0.55; transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.claim:hover .anchor, .claim-head .anchor:focus-visible { opacity: 1; }
+.claim-head .anchor:hover { color: var(--accent); background: var(--paper-2); }
+.claim-head .chev { color: var(--muted); transition: transform 0.2s; }
 .claim[open] .claim-head .chev { transform: rotate(180deg); }
 .part-label {
   display: block; margin-bottom: 4px;
@@ -129,5 +135,4 @@
   border-radius: 999px; background: var(--accent-soft); color: var(--accent);
 }
 .chip b { font-weight: 650; margin-left: 4px; }
-.claim-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
 .empty-filter { font-family: var(--font-ui); color: var(--muted); text-align: center; padding: 24px; }

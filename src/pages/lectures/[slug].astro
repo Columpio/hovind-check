@@ -60,7 +60,6 @@ const ratings = (Object.keys(RATINGS) as Rating[])
       </section>
     </div>
   </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <p class="lecture-credits" slot="footer">
     <b>Об этом видео.</b> {lecture.author}. {lecture.source}. {lecture.voiceover}.
     {' '}Источник видео:
@@ -119,24 +118,16 @@ const ratings = (Object.keys(RATINGS) as Rating[])
     }),
   );
 
-  // Скопировать ссылку.
-  const toast = document.getElementById('toast')!;
-  let toastTimer = 0;
-  function showToast(text: string) {
-    toast.textContent = text;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2000);
-  }
-  document.querySelectorAll<HTMLButtonElement>('.copy').forEach((b) =>
-    b.addEventListener('click', async () => {
-      const url = `${location.origin}${location.pathname}#t=${b.dataset.frag}`;
-      try {
-        await navigator.clipboard.writeText(url);
-        showToast('Ссылка скопирована');
-      } catch {
-        prompt('Скопируйте ссылку:', url);
-      }
+  // Якорь как в Википедии: ссылка становится адресом страницы, её можно скопировать из адресной строки.
+  // Клик внутри <summary> не должен сворачивать карточку, а повторный клик по тому же якорю не вызывает hashchange.
+  document.querySelectorAll<HTMLAnchorElement>('.claim .anchor').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const c = a.closest<HTMLDetailsElement>('.claim')!;
+      history.pushState(null, '', a.hash);
+      reveal(c);
+      whenPlayer((p) => p.seekLecture(Number(c.dataset.start)));
     }),
   );
 
