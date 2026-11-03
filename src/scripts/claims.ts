@@ -14,7 +14,7 @@ export class ClaimList {
     this.emptyNote = root.querySelector('#empty-filter');
 
     for (const c of this.items) {
-      c.querySelectorAll<HTMLButtonElement>('.fold').forEach((b) => b.addEventListener('click', () => this.setOpen(c, !this.isOpen(c))));
+      c.querySelector<HTMLButtonElement>('.claim-cut')?.addEventListener('click', () => this.setOpen(c, !this.isOpen(c)));
     }
     for (const b of this.filters) {
       b.addEventListener('click', () => this.setFilter(b.dataset.filter!, b.getAttribute('aria-pressed') !== 'true'));
@@ -33,21 +33,23 @@ export class ClaimList {
     return c && t >= Number(c.dataset.start) && t < Number(c.dataset.end) ? c : null;
   }
 
+  /** Цитата и вердикт видны всегда; раскрывается только «Подробнее» со вставками. */
   isOpen(c: HTMLElement): boolean {
-    return !c.querySelector<HTMLElement>('.claim-body')!.hidden;
+    const more = c.querySelector<HTMLElement>('.more');
+    return Boolean(more && !more.hidden);
   }
 
   setOpen(c: HTMLElement, open: boolean): void {
-    c.querySelector<HTMLElement>('.claim-body')!.hidden = !open;
-    c.querySelectorAll<HTMLButtonElement>('.fold').forEach((fold) => fold.setAttribute('aria-expanded', String(open)));
-    const top = c.querySelector<HTMLButtonElement>('.claim-head .fold')!;
-    top.title = open ? 'Скрыть разбор' : 'Показать разбор';
+    const more = c.querySelector<HTMLElement>('.more');
+    if (!more) return;
+    more.hidden = !open;
+    c.querySelector<HTMLButtonElement>('.claim-cut')!.setAttribute('aria-expanded', String(open));
   }
 
   private setAll(open: boolean): void {
     for (const c of this.items) {
       this.setOpen(c, open);
-      c.querySelectorAll<HTMLDetailsElement>('details.more, details.inset').forEach((d) => (d.open = open));
+      c.querySelectorAll<HTMLDetailsElement>('details.inset').forEach((d) => (d.open = open));
     }
   }
 
@@ -60,7 +62,6 @@ export class ClaimList {
   /** Показать утверждение: снять с него фильтр, раскрыть и прокрутить к нему. */
   reveal(c: HTMLElement, behavior: ScrollBehavior): void {
     if (c.hidden) this.setFilter(c.dataset.rating!, true);
-    this.setOpen(c, true);
     // На телефоне сверху прилипает видео: отступаем на его высоту, иначе карточка спрячется под ним.
     const player = document.getElementById('player')!;
     const header = document.querySelector<HTMLElement>('header.site')!;

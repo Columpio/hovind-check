@@ -116,17 +116,16 @@
   border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--accent);
 }
 .tc:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.anchor, .fold {
+.anchor {
   display: grid; place-items: center; width: var(--tap); height: var(--tap); border-radius: 10px;
-  color: var(--muted); border: 0; background: none;
+  color: var(--muted); border: 0; background: none; margin-left: auto;
 }
-.anchor { margin-left: auto; }
-.anchor:hover, .fold:hover { color: var(--accent); background: var(--accent-soft); }
-.fold svg { transition: transform 0.2s; }
-.fold[aria-expanded='true'] svg { transform: rotate(180deg); }
+.anchor:hover, .claim-cut:hover { color: var(--accent); background: var(--accent-soft); }
+.claim-cut svg { transition: transform 0.2s; }
+.claim-cut[aria-expanded='true'] svg { transform: rotate(180deg); }
 /* Явная кнопка-«кат» внизу карточки, как у вставок: стрелки в углу читателю мало. */
-.fold.claim-cut {
-  display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: auto; min-height: var(--tap);
+.claim-cut {
+  display: flex; align-items: center; justify-content: center; gap: 6px; height: auto; min-height: var(--tap); border: 0; background: none;
   margin: 12px -14px -14px -16px; width: calc(100% + 30px); border-top: 1px dashed var(--line); border-radius: 0 0 var(--radius) 0;
   font-family: var(--font-ui); font-size: 0.86rem; font-weight: 650; color: var(--accent);
 }
@@ -148,15 +147,7 @@
 .claim-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .analysis-label { color: var(--c); }
 .verdict { margin: 0; font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.55; font-weight: 500; color: var(--ink); }
-.more { margin-top: 6px; }
-.more > summary {
-  display: inline-flex; align-items: center; gap: 6px; min-height: var(--tap); cursor: pointer; list-style: none;
-  font-family: var(--font-ui); font-weight: 600; font-size: 0.84rem; color: var(--accent);
-}
-.more > summary::-webkit-details-marker { display: none; }
-.more > summary::before { content: '+'; font-weight: 700; width: 1em; text-align: center; }
-.more[open] > summary::before { content: '−'; }
-.more .prose { padding: 0 0 4px; }
+.more { margin-top: 4px; }
 
 .inset { margin-top: 10px; border-radius: 10px; background: var(--paper-2); border-left: 3px solid var(--line); }
 .inset-rhetoric { border-left-color: var(--accent); }

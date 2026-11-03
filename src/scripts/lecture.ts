@@ -11,7 +11,6 @@ const toCurrent = document.getElementById('to-current') as HTMLButtonElement;
 function goTo(c: HTMLElement, scroll: boolean) {
   history.replaceState(null, '', `#${c.id}`);
   if (scroll) claims.reveal(c, 'smooth');
-  else claims.setOpen(c, true);
   player.seek(Number(c.dataset.start));
 }
 // После клика по якорю объясняем, что произошло: на телефоне адресную строку часто не видно.

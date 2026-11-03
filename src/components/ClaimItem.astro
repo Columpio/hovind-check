@@ -5,8 +5,7 @@ interface Props { claim: Claim; }
 const { claim } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const frag = timeFragment(claim.start);
-const bodyId = `${claim.id}-body`;
-const collapsed = claim.rating === 'neutral';
+const moreId = `${claim.id}-more`;
 const args = (claim.arguments ?? []).map((s) => getArticle('arguments', s));
 const rhet = (claim.rhetoric ?? []).map((s) => getArticle('rhetoric', s));
 // Вставки доводов и приёмов устроены одинаково: раскрывающийся блок с полным текстом статьи.
@@ -34,10 +33,6 @@ const hasMore = insets.length > 0;
     <a class="anchor" href={`#t=${frag}`} title="Ссылка на это утверждение" aria-label={`Ссылка на утверждение с ${formatTime(claim.start)}`}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
     </a>
-    <button type="button" class="fold" aria-expanded={collapsed ? 'false' : 'true'} aria-controls={bodyId} title={collapsed ? 'Показать разбор' : 'Скрыть разбор'}>
-      <span class="sr-only">Разбор</span>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-    </button>
   </div>
 
   <blockquote class="quote">
@@ -45,12 +40,14 @@ const hasMore = insets.length > 0;
     <p>{claim.text}</p>
   </blockquote>
 
-  <div class="claim-body" id={bodyId} hidden={collapsed}>
+  <div class="claim-body">
     <span class="part-label analysis-label">Наш разбор</span>
     <p class="verdict">{claim.verdict}</p>
-    {hasMore && (
-      <details class="more">
-        <summary>Подробнее</summary>
+  </div>
+
+  {hasMore && (
+    <>
+      <div class="more" id={moreId} hidden>
         {insets.map((a) => (
           <details class={`inset inset-${a.kind}`}>
             <summary>
@@ -69,13 +66,12 @@ const hasMore = insets.length > 0;
             <a class="inset-link" href={`${base}${a.kind}/${a.slug}/`}>Отдельная страница и все места, где он встречается →</a>
           </details>
         ))}
-      </details>
-    )}
-  </div>
-
-  <button type="button" class="fold claim-cut" aria-expanded={collapsed ? 'false' : 'true'} aria-controls={bodyId}>
-    <span class="when-closed">Показать разбор</span>
-    <span class="when-open">Скрыть разбор</span>
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-  </button>
+      </div>
+      <button type="button" class="fold claim-cut" aria-expanded="false" aria-controls={moreId}>
+        <span class="when-closed">Подробнее</span>
+        <span class="when-open">Скрыть подробности</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </>
+  )}
 </article>
