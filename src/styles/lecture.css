@@ -124,6 +124,14 @@
 .anchor:hover, .fold:hover { color: var(--accent); background: var(--accent-soft); }
 .fold svg { transition: transform 0.2s; }
 .fold[aria-expanded='true'] svg { transform: rotate(180deg); }
+/* Явная кнопка-«кат» внизу карточки, как у вставок: стрелки в углу читателю мало. */
+.fold.claim-cut {
+  display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: auto; min-height: var(--tap);
+  margin: 12px -14px -14px -16px; width: calc(100% + 30px); border-top: 1px dashed var(--line); border-radius: 0 0 var(--radius) 0;
+  font-family: var(--font-ui); font-size: 0.86rem; font-weight: 650; color: var(--accent);
+}
+.claim-cut .when-open, .claim-cut[aria-expanded='true'] .when-closed { display: none; }
+.claim-cut[aria-expanded='true'] .when-open { display: inline; }
 
 .part-label {
   display: block; margin-bottom: 2px;

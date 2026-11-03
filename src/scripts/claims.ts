@@ -14,7 +14,7 @@ export class ClaimList {
     this.emptyNote = root.querySelector('#empty-filter');
 
     for (const c of this.items) {
-      c.querySelector<HTMLButtonElement>('.fold')!.addEventListener('click', () => this.setOpen(c, !this.isOpen(c)));
+      c.querySelectorAll<HTMLButtonElement>('.fold').forEach((b) => b.addEventListener('click', () => this.setOpen(c, !this.isOpen(c))));
     }
     for (const b of this.filters) {
       b.addEventListener('click', () => this.setFilter(b.dataset.filter!, b.getAttribute('aria-pressed') !== 'true'));
@@ -39,9 +39,9 @@ export class ClaimList {
 
   setOpen(c: HTMLElement, open: boolean): void {
     c.querySelector<HTMLElement>('.claim-body')!.hidden = !open;
-    const fold = c.querySelector<HTMLButtonElement>('.fold')!;
-    fold.setAttribute('aria-expanded', String(open));
-    fold.title = open ? 'Скрыть разбор' : 'Показать разбор';
+    c.querySelectorAll<HTMLButtonElement>('.fold').forEach((fold) => fold.setAttribute('aria-expanded', String(open)));
+    const top = c.querySelector<HTMLButtonElement>('.claim-head .fold')!;
+    top.title = open ? 'Скрыть разбор' : 'Показать разбор';
   }
 
   private setAll(open: boolean): void {
