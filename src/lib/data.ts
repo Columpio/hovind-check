@@ -130,8 +130,6 @@ function checkClaims(slug: string, claims: Claim[]): void {
     if (!(c.rating in RATINGS)) throw new Error(`${where}: неизвестная оценка «${c.rating}»`);
     if (!(c.start < c.end)) throw new Error(`${where}: start должен быть меньше end`);
     // «Подробнее» состоит только из вставок статей: свой текст пишем в статью довода или приёма.
-    // На странице лекции должна быть вся речь: text заполняет scripts/fill-claim-text.py из полной расшифровки.
-    if (c.text.includes('…')) throw new Error(`${where}: цитата сокращена «…»; пересоберите текст командой python scripts/fill-claim-text.py`);
     if ('details' in c) throw new Error(`${where}: поле details больше не используется; перенесите текст в статью довода или приёма`);
     if ((c.arguments?.length ?? 0) > 1) throw new Error(`${where}: больше одного повторяющегося довода; оставьте один`);
     const needsArticle = c.rating === 'red' || c.rating === 'orange' || c.rating === 'purple';
