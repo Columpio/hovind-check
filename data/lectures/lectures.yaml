@@ -11,7 +11,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: YXHGTPGcnzE, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: 787b154918c923c60aeaf1ad53b86103, channel: "Библиотека христианских материалов", offset: 0 }
-  draft: true # пробные данные в claims.yaml
+  draft: true # пилот: разобраны 0:50–12:03, не вычитано
 
 - slug: lecture-2
   number: 2
