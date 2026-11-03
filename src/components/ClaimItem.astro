@@ -57,6 +57,11 @@ const hasMore = insets.length > 0;
               <span class="inset-label">{a.label}</span>
               <span class="inset-title">{a.title}</span>
               <span class="inset-summary">{a.summary}</span>
+              <span class="inset-cut" aria-hidden="true">
+                <span class="when-closed">{a.pending ? 'Подробнее' : 'Читать разбор'}</span>
+                <span class="when-open">Свернуть</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
             </summary>
             {a.pending
               ? <p class="pending-note">Подробный разбор {a.kind === 'arguments' ? 'этого довода' : 'этого приёма'} готовится. Список мест, где он встречается, — на отдельной странице.</p>

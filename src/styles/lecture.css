@@ -152,15 +152,22 @@
 
 .inset { margin-top: 10px; border-radius: 10px; background: var(--paper-2); border-left: 3px solid var(--line); }
 .inset-rhetoric { border-left-color: var(--accent); }
-.inset > summary {
-  display: grid; gap: 2px; padding: 10px 40px 10px 14px; min-height: var(--tap); cursor: pointer; list-style: none; position: relative;
-}
+.inset > summary { display: grid; gap: 2px; padding: 10px 14px 0; cursor: pointer; list-style: none; }
 .inset > summary::-webkit-details-marker { display: none; }
-.inset > summary::after {
-  content: '+'; position: absolute; right: 14px; top: 10px;
-  font-family: var(--font-ui); font-weight: 700; color: var(--accent);
+/* Явная кнопка-«кат» внизу заголовка: читатель сразу видит, что блок раскрывается. */
+.inset-cut {
+  display: flex; align-items: center; justify-content: center; gap: 6px; min-height: var(--tap);
+  margin: 8px -14px 0; border-top: 1px dashed var(--line);
+  font-family: var(--font-ui); font-size: 0.86rem; font-weight: 650; color: var(--accent);
 }
-.inset[open] > summary::after { content: '−'; }
+.inset > summary:hover .inset-cut { background: var(--accent-soft); }
+.inset-cut svg { transition: transform 0.2s; }
+.inset[open] .inset-cut svg { transform: rotate(180deg); }
+.inset .when-open, .inset[open] .when-closed { display: none; }
+.inset[open] .when-open { display: inline; }
+.inset[open] > summary { padding-bottom: 0; }
+.inset[open] .inset-cut { margin-bottom: 8px; border-bottom: 1px dashed var(--line); }
+@media (prefers-reduced-motion: reduce) { .inset-cut svg { transition: none; } }
 .inset-label { font-family: var(--font-ui); font-size: 0.76rem; font-weight: 600; letter-spacing: 0.02em; color: var(--muted); }
 .inset-title { font-family: var(--font-ui); font-weight: 650; color: var(--accent); }
 .inset-summary { font-size: 0.95rem; color: var(--ink-2); }
