@@ -1,6 +1,9 @@
 # Private materials: videos, chat export, full transcripts. Never commit.
 resources/
 
+# Working research notes (sources, licensing, decisions): local only.
+research/
+
 # Build and dependencies
 node_modules/
 dist/
