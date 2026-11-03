@@ -47,7 +47,7 @@ export class ClaimList {
   private setAll(open: boolean): void {
     for (const c of this.items) {
       this.setOpen(c, open);
-      c.querySelectorAll<HTMLDetailsElement>('details.more').forEach((d) => (d.open = open));
+      c.querySelectorAll<HTMLDetailsElement>('details.more, details.inset').forEach((d) => (d.open = open));
     }
   }
 

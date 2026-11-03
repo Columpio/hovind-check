@@ -150,10 +150,22 @@
 .more[open] > summary::before { content: '−'; }
 .more .prose { padding: 0 0 4px; }
 
-.inset { margin-top: 12px; border-radius: 10px; padding: 10px 14px; background: var(--paper-2); }
-.inset-label { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); }
-.inset-label a { font-weight: 650; }
-.inset-summary { margin: 4px 0 0; font-size: 0.95rem; }
+.inset { margin-top: 10px; border-radius: 10px; background: var(--paper-2); border-left: 3px solid var(--line); }
+.inset-rhetoric { border-left-color: var(--accent); }
+.inset > summary {
+  display: grid; gap: 2px; padding: 10px 40px 10px 14px; min-height: var(--tap); cursor: pointer; list-style: none; position: relative;
+}
+.inset > summary::-webkit-details-marker { display: none; }
+.inset > summary::after {
+  content: '+'; position: absolute; right: 14px; top: 10px;
+  font-family: var(--font-ui); font-weight: 700; color: var(--accent);
+}
+.inset[open] > summary::after { content: '−'; }
+.inset-label { font-family: var(--font-ui); font-size: 0.76rem; font-weight: 600; letter-spacing: 0.02em; color: var(--muted); }
+.inset-title { font-family: var(--font-ui); font-weight: 650; color: var(--accent); }
+.inset-summary { font-size: 0.95rem; color: var(--ink-2); }
+.inset > .prose { padding: 0 14px; }
+.inset-link { display: inline-block; margin: 4px 14px 12px; font-family: var(--font-ui); font-size: 0.84rem; }
 
 .empty-filter { font-family: var(--font-ui); color: var(--muted); text-align: center; padding: 24px; }
 
