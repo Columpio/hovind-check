@@ -113,6 +113,10 @@ function checkClaims(slug: string, claims: Claim[]): void {
     // «Подробнее» состоит только из вставок статей: свой текст пишем в статью довода или приёма.
     if ('details' in c) throw new Error(`${where}: поле details больше не используется; перенесите текст в статью довода или приёма`);
     if ((c.arguments?.length ?? 0) > 1) throw new Error(`${where}: больше одного повторяющегося довода; оставьте один`);
+    const needsArticle = c.rating === 'red' || c.rating === 'orange' || c.rating === 'purple';
+    if (needsArticle && !c.arguments?.length && !c.rhetoric?.length) {
+      throw new Error(`${where}: у оценки «${c.rating}» нужен довод или приём со статьёй, иначе в «Подробнее» нечего показать`);
+    }
     const frag = timeFragment(c.start);
     const twin = fragments.get(frag);
     if (twin) throw new Error(`${where}: начинается в ту же секунду, что и ${twin}; ссылка #t=${frag} была бы неоднозначной`);
