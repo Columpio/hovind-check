@@ -103,6 +103,7 @@ function checkClaims(slug: string, claims: Claim[]): void {
   };
   const ids = new Set<string>();
   const fragments = new Map<string, string>();
+  let previous: Claim | undefined;
   for (const c of claims) {
     const where = `data/lectures/${slug}/claims.yaml, утверждение ${c.id}`;
     if (!c.id) throw new Error(`${where}: нет id`);
@@ -114,6 +115,10 @@ function checkClaims(slug: string, claims: Claim[]): void {
     const twin = fragments.get(frag);
     if (twin) throw new Error(`${where}: начинается в ту же секунду, что и ${twin}; ссылка #t=${frag} была бы неоднозначной`);
     fragments.set(frag, c.id);
+    if (c.rating === 'neutral' && previous?.rating === 'neutral') {
+      throw new Error(`${where}: идёт сразу после нейтрального ${previous.id}; объедините их в одно утверждение`);
+    }
+    previous = c;
     for (const kind of ['arguments', 'rhetoric'] as const) {
       for (const tag of c[kind] ?? []) {
         if (!known[kind].has(tag)) throw new Error(`${where}: нет статьи data/${kind}/${tag}.md`);

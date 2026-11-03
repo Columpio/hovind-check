@@ -1,0 +1,15 @@
+#!/bin/sh
+# Before every push: build the site, which validates data/ (see checkClaims in src/lib/data.ts).
+# Installed into .git/hooks by `npm run hooks`.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# Astro needs Node >= 22.23.4; on the owner's machine the newer Node lives in nvm4w.
+[ -d /c/nvm4w/nodejs ] && PATH="/c/nvm4w/nodejs:$PATH"
+
+echo "pre-push: проверяю данные и сборку сайта…"
+if ! npm run build --silent > .tasks/pre-push.log 2>&1; then
+    grep -E "Error|Ошибка|data/" .tasks/pre-push.log | head -20
+    echo "pre-push: сборка не прошла, push отменён. Полный лог: .tasks/pre-push.log"
+    exit 1
+fi
+echo "pre-push: всё в порядке."

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "hooks": "node scripts/install-hooks.mjs"
   },
   "repository": {
     "type": "git",
