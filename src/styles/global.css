@@ -184,6 +184,9 @@ h3 { font-size: 1.05rem; }
 .prose p { margin: 0.6em 0; }
 .prose ul, .prose ol { padding-left: 1.3em; }
 .prose img, .prose svg { max-width: 100%; height: auto; }
+.prose figure.diagram { margin: 1.4em 0; padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); }
+.prose figure.diagram svg { display: block; width: 100%; font-family: var(--font-ui); }
+.prose figure.diagram figcaption { margin-top: 8px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); }
 .prose table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
 .prose th, .prose td { border: 1px solid var(--line); padding: 6px 8px; }
 
