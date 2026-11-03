@@ -90,8 +90,8 @@ button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulat
 .skip:focus { left: 8px; }
 
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
-/* Узкие страницы: колонка текста выровнена по левому краю шапки, а не по центру. */
-.wrap.narrow > * { max-width: 760px; }
+/* Текстовые страницы (статьи, каталоги, «О проекте»): колонка по центру, ширина как у колонки разбора лекции. */
+.wrap.narrow { max-width: calc(880px + 32px); }
 
 /* Шапка */
 header.site {
