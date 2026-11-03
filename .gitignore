@@ -4,6 +4,10 @@ resources/
 # Working research notes (sources, licensing, decisions): local only.
 research/
 
+# Owner's task list and agent rules: personal, local only.
+TODO.md
+AGENTS.md
+
 # Build and dependencies
 node_modules/
 dist/

@@ -4,6 +4,6 @@
 
 Проект делают христиане разных деноминаций. Мы не спорим с верой в Бога-Творца, а проверяем научные утверждения.
 
-- Правила и план работы: [`AGENTS.md`](AGENTS.md)
+- Сайт: https://columpio.github.io/hovind-check/
 - Правовая информация: [`LEGAL.md`](LEGAL.md), [`NOTICE`](NOTICE)
 - Лицензии: код — [MIT](LICENSE), тексты — [CC BY-SA 4.0](LICENSE-CONTENT.md)
