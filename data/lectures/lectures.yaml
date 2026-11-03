@@ -11,7 +11,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: YXHGTPGcnzE, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: 787b154918c923c60aeaf1ad53b86103, channel: "Библиотека христианских материалов", offset: 0 }
-  draft: true # пилот: разобраны 0:50–12:03, не вычитано
+  draft: true # не вычитано
 
 - slug: lecture-2
   number: 2
@@ -23,6 +23,7 @@
   # Исходная загрузка GEahxWOYeQ8 удалена YouTube; замена, смещение по звуку +0,12 с (пренебрежимо).
   youtube: { id: g-7cnkhgAjg, channel: "Дмитрий Слепухин", offset: 0 }
   rutube: { id: 6d0724237d129ed5952b3757302c6d2f, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lecture-3
   number: 3
@@ -33,6 +34,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: 5b-4Aj2bt5c, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: 4092114c8f50e49c6935eb5035598727, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lecture-4
   number: 4
@@ -43,6 +45,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: scPVRG6Zwbc, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: cc09db10bdc81c4b28ba24502617c5f3, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lecture-5
   number: 5
@@ -53,6 +56,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: S0XiCBdEQao, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: f3b6745c5f1bf4ece401620d290e3dd2, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lecture-6
   number: 6
@@ -63,6 +67,7 @@
   rights: "Kent Hovind / Creation Science Evangelism"
   youtube: { id: 53GssR9DqMA, channel: "kornel Zastavnetchi", offset: 0 }
   rutube: { id: de59492fd40fd7a34e5b3d2313424d46, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lecture-7
   number: 7
@@ -74,6 +79,7 @@
   # Исходная загрузка jlpLRQOotTg удалена YouTube; замена, смещение по звуку +0,23 с (пренебрежимо).
   youtube: { id: e3mSkSpmSYE, channel: "Mr.Synel`nikoff", offset: 0 }
   rutube: { id: 6334913d7bfeacb45f2cdeb1817bae43, channel: "Библиотека христианских материалов", offset: 0 }
+  draft: true # не вычитано
 
 - slug: lies-in-the-name-of-science
   number: 8
@@ -93,3 +99,4 @@
       - { from: 1300, offset: -15.3 }
       - { from: 2000, offset: -7.1 }
       - { from: 2950, offset: -3.1 }
+  draft: true # не вычитано

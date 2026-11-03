@@ -22,7 +22,7 @@ const claims = getClaims(lecture.slug);
     <header class="lecture-head">
       <p class="meta"><a href={`${base}lectures/`}>← Все лекции</a></p>
       <h1>{lectureLabel(lecture)}</h1>
-      {lecture.draft && <div class="draft-note">Черновик: разбор ещё пишется и не вычитан. Сейчас разобраны первые 12 минут.</div>}
+      {lecture.draft && <div class="draft-note">Черновик: разбор ещё не вычитан. Подробные статьи к части доводов готовятся.</div>}
     </header>
 
     <div class="lecture-grid">
