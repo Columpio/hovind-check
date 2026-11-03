@@ -1,18 +1,21 @@
 ---
-import RatingIcon from './RatingIcon.astro';
-import { RATINGS, type Rating } from '../lib/data';
+import RatingPill from './RatingPill.astro';
+import { RATINGS, RATING_ORDER } from '../lib/data';
 ---
 <dl class="legend-list">
-  {(Object.keys(RATINGS) as Rating[]).map((r) => (
+  {RATING_ORDER.map((r) => (
     <div>
-      <dt><span class={`rating-pill ${r}`}><RatingIcon rating={r} />{RATINGS[r].label}</span></dt>
+      <dt><RatingPill rating={r} /></dt>
       <dd>{RATINGS[r].hint}</dd>
     </div>
   ))}
 </dl>
 <style>
-  .legend-list { display: grid; gap: 8px; margin: 0; }
-  .legend-list div { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-  .legend-list dt { flex: none; min-width: 13rem; }
-  .legend-list dd { margin: 0; color: var(--ink-2); }
+  .legend-list { display: grid; grid-template-columns: max-content 1fr; gap: 10px 14px; margin: 0; align-items: baseline; }
+  .legend-list div { display: contents; }
+  .legend-list dd { margin: 0; color: var(--ink-2); font-family: var(--font-ui); font-size: 0.86rem; }
+  @media (max-width: 520px) {
+    .legend-list { grid-template-columns: 1fr; gap: 4px; }
+    .legend-list dd { margin-bottom: 8px; }
+  }
 </style>

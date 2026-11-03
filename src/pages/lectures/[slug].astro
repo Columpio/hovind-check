@@ -3,8 +3,8 @@ import '../../styles/lecture.css';
 import Base from '../../layouts/Base.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
 import ClaimItem from '../../components/ClaimItem.astro';
-import RatingIcon from '../../components/RatingIcon.astro';
-import { getLectures, getClaims, getArguments, getRhetoric, lectureLabel, RATINGS, type Rating } from '../../lib/data';
+import RatingFilter from '../../components/RatingFilter.astro';
+import { getLectures, getClaims, lectureLabel } from '../../lib/data';
 
 export function getStaticPaths() {
   const lectures = getLectures();
@@ -16,171 +16,48 @@ export function getStaticPaths() {
 const { lecture, prev, next } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const claims = getClaims(lecture.slug);
-const argumentsBySlug = new Map(getArguments().map((a) => [a.slug, a]));
-const rhetoricBySlug = new Map(getRhetoric().map((a) => [a.slug, a]));
-const ratings = (Object.keys(RATINGS) as Rating[])
-  .map((r) => ({ r, n: claims.filter((c) => c.rating === r).length }))
-  .filter((x) => x.n > 0);
 ---
 <Base title={lectureLabel(lecture)} section="lectures">
   <div class="wrap">
-    <div class="lecture-head">
-      <nav class="lecture-nav" aria-label="Другие лекции">
-        <span>{prev && <a href={`${base}lectures/${prev.slug}/`}>← {lectureLabel(prev)}</a>}</span>
-        <span>{next && <a href={`${base}lectures/${next.slug}/`}>{lectureLabel(next)} →</a>}</span>
-      </nav>
+    <header class="lecture-head">
+      <p class="meta"><a href={`${base}lectures/`}>← Все лекции</a></p>
       <h1>{lectureLabel(lecture)}</h1>
       {lecture.draft && <div class="draft-note">Пробная страница: тексты и тайм-коды условные, нужны, чтобы проверить работу сайта.</div>}
-    </div>
+    </header>
 
     <div class="lecture-grid">
-      <div class="video-col"><VideoPlayer lecture={lecture} /></div>
+      <div class="video-col">
+        <VideoPlayer lecture={lecture} />
+        {claims.length > 0 && <RatingFilter claims={claims} />}
+      </div>
 
       <section class="claims-col" aria-label="Разбор утверждений">
-        {claims.length === 0 && (
-          <div class="draft-note">Разбор этой части готовится. Видео можно посмотреть уже сейчас.</div>
-        )}
-        <div class="toolbar" hidden={claims.length === 0}>
-          <span class="label" id="filter-label">Показать оценки (нажмите, чтобы скрыть или показать):</span>
-          {ratings.map(({ r, n }) => (
-            <button type="button" class={`filter ${r}`} data-filter={r} aria-pressed="true" aria-describedby="filter-label" title={RATINGS[r].hint}>
-              <RatingIcon rating={r} />{RATINGS[r].label} <span class="n">{n}</span>
-            </button>
-          ))}
-          <div class="actions">
-            <button type="button" class="btn" id="expand-all">Развернуть всё</button>
-            <button type="button" class="btn" id="collapse-all">Свернуть всё</button>
+        {claims.length === 0 ? (
+          <div class="draft-note">Разбор этой лекции готовится. Видео можно посмотреть уже сейчас.</div>
+        ) : (
+          <div class="claims" id="claims">
+            {claims.map((claim) => <ClaimItem claim={claim} />)}
+            <p class="empty-filter" id="empty-filter" hidden>Все утверждения скрыты. Включите хотя бы одну оценку в списке «Оценки».</p>
           </div>
-        </div>
+        )}
 
-        <div class="claims" id="claims">
-          {claims.map((claim) => <ClaimItem claim={claim} argumentsBySlug={argumentsBySlug} rhetoricBySlug={rhetoricBySlug} />)}
-          <p class="empty-filter" id="empty-filter" hidden>Все утверждения скрыты фильтром. Включите хотя бы одну оценку выше.</p>
-        </div>
+        <nav class="lecture-pager" aria-label="Другие лекции">
+          {prev && <a class="prev" href={`${base}lectures/${prev.slug}/`}><small>← Предыдущая</small><b>{lectureLabel(prev)}</b></a>}
+          {next && <a class="next" href={`${base}lectures/${next.slug}/`}><small>Следующая →</small><b>{lectureLabel(next)}</b></a>}
+          <a class="all" href={`${base}lectures/`}><b>Все лекции</b></a>
+        </nav>
       </section>
     </div>
   </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <p class="lecture-credits" slot="footer">
-    <b>Об этом видео.</b> {lecture.author}. {lecture.source}. {lecture.voiceover}.
-    {' '}Источник видео:
-    {lecture.youtube?.id && <> <a href={`https://www.youtube.com/watch?v=${lecture.youtube.id}`}>YouTube</a>{lecture.youtube.channel && ` (канал «${lecture.youtube.channel}»)`}</>}
+    <b>Об этом видео.</b> {lecture.author}. {lecture.source}. {lecture.voiceover}. Источник видео:{' '}
+    {lecture.youtube?.id && <><a href={`https://www.youtube.com/watch?v=${lecture.youtube.id}`}>YouTube</a>{lecture.youtube.channel && ` (канал «${lecture.youtube.channel}»)`}</>}
     {lecture.rutube?.id && <>, <a href={`https://rutube.ru/video/${lecture.rutube.id}/`}>RuTube</a>{lecture.rutube.channel && ` (канал «${lecture.rutube.channel}»)`}</>}.
-    {' '}Права: {lecture.rights}.
+    Права: {lecture.rights}.
   </p>
 </Base>
 
 <script>
-  /** #t=12m34s | #t=1h02m03s | #t=754 → секунды */
-  function parseFragment(hash: string): number | null {
-    const m = hash.match(/^#t=(.+)$/);
-    if (!m) return null;
-    const v = decodeURIComponent(m[1]);
-    if (/^\d+(\.\d+)?$/.test(v)) return Number(v);
-    const p = v.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
-    if (!p || !(p[1] || p[2] || p[3])) return null;
-    return Number(p[1] ?? 0) * 3600 + Number(p[2] ?? 0) * 60 + Number(p[3] ?? 0);
-  }
-
-  const claims = Array.from(document.querySelectorAll<HTMLDetailsElement>('.claim'));
-  const inRange = (c: HTMLElement, t: number) => t >= Number(c.dataset.start) && t < Number(c.dataset.end);
-  const claimAt = (t: number) =>
-    claims.find((c) => inRange(c, t)) ?? [...claims].reverse().find((c) => Number(c.dataset.start) <= t) ?? claims[0];
-
-  function whenPlayer(fn: (p: any) => void) {
-    const w = window as any;
-    if (w.hcPlayer) fn(w.hcPlayer);
-    else window.addEventListener('hc-player-ready', () => fn(w.hcPlayer), { once: true });
-  }
-
-  function reveal(c: HTMLDetailsElement | undefined | null) {
-    if (!c) return;
-    if (c.hidden) setFilter(c.dataset.rating!, true);
-    c.open = true;
-    // На телефоне сверху прилипает видео: отступаем на его высоту, иначе карточка спрячется под ним.
-    const video = document.querySelector<HTMLElement>('.video-col')!;
-    const header = document.querySelector<HTMLElement>('header.site')!;
-    const stickyVideo = getComputedStyle(video).position === 'sticky' && innerWidth < 980;
-    const top = stickyVideo
-      ? video.offsetHeight + 8
-      : getComputedStyle(header).position === 'sticky' ? header.offsetHeight + 12 : 12;
-    scrollTo({ top: c.getBoundingClientRect().top + scrollY - top, behavior: 'smooth' });
-  }
-
-  // Тайм-код: перемотать и включить видео, обновить адрес страницы.
-  document.querySelectorAll<HTMLButtonElement>('.tc').forEach((b) =>
-    b.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const c = b.closest<HTMLDetailsElement>('.claim')!;
-      c.open = true;
-      history.replaceState(null, '', `#t=${c.dataset.frag}`);
-      whenPlayer((p) => p.seekLecture(Number(b.dataset.seek)));
-    }),
-  );
-
-  // Якорь как в Википедии: ссылка становится адресом страницы, её можно скопировать из адресной строки.
-  // Клик внутри <summary> не должен сворачивать карточку, а повторный клик по тому же якорю не вызывает hashchange.
-  document.querySelectorAll<HTMLAnchorElement>('.claim .anchor').forEach((a) =>
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const c = a.closest<HTMLDetailsElement>('.claim')!;
-      history.pushState(null, '', a.hash);
-      reveal(c);
-      whenPlayer((p) => p.seekLecture(Number(c.dataset.start)));
-    }),
-  );
-
-  // Фильтр по оценкам.
-  const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
-  const emptyNote = document.getElementById('empty-filter')!;
-  function setFilter(rating: string, on: boolean) {
-    const b = filters.find((f) => f.dataset.filter === rating);
-    b?.setAttribute('aria-pressed', String(on));
-    claims.filter((c) => c.dataset.rating === rating).forEach((c) => (c.hidden = !on));
-    emptyNote.hidden = claims.some((c) => !c.hidden);
-  }
-  filters.forEach((b) =>
-    b.addEventListener('click', () => setFilter(b.dataset.filter!, b.getAttribute('aria-pressed') !== 'true')),
-  );
-
-  // Развернуть / свернуть всё.
-  function setAll(open: boolean) {
-    claims.forEach((c) => {
-      c.open = open;
-      c.querySelectorAll<HTMLDetailsElement>('details.more').forEach((d) => (d.open = open));
-    });
-  }
-  document.getElementById('expand-all')!.addEventListener('click', () => setAll(true));
-  document.getElementById('collapse-all')!.addEventListener('click', () => setAll(false));
-
-  // Ссылка #t=…: прокрутить к утверждению и поставить видео на это место.
-  const initial = parseFragment(location.hash);
-  if (initial !== null) reveal(claimAt(initial));
-  // Автозапуск со звуком браузеры часто запрещают; тогда видео просто встанет на нужную секунду.
-  whenPlayer((p) => p.init(initial ?? 0, initial !== null));
-  window.addEventListener('hashchange', () => {
-    const t = parseFragment(location.hash);
-    if (t === null) return;
-    reveal(claimAt(t));
-    whenPlayer((p) => p.seekLecture(t));
-  });
-
-  // Подсветка утверждения, которое сейчас звучит, и кнопка «к текущему моменту».
-  let active: HTMLDetailsElement | null = null;
-  setInterval(() => {
-    const t = (window as any).hcPlayer?.currentLectureTime?.();
-    if (t == null) return;
-    const c = claims.find((x) => inRange(x, t)) ?? null;
-    if (c === active) return;
-    active?.classList.remove('playing');
-    active?.removeAttribute('aria-current');
-    c?.classList.add('playing');
-    c?.setAttribute('aria-current', 'true');
-    active = c;
-  }, 700);
-  document.getElementById('to-current')?.addEventListener('click', () => {
-    const t = (window as any).hcPlayer?.currentLectureTime?.();
-    reveal(active ?? (t != null ? claimAt(t) : claims[0]));
-  });
+  import '../../scripts/lecture';
 </script>

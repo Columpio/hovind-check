@@ -1,6 +1,7 @@
 ---
-import { withFrequency } from '../lib/data';
-interface Props { kind: 'arguments' | 'rhetoric'; }
+import { withFrequency, type CatalogKind } from '../lib/data';
+import { pluralRu } from '../lib/time';
+interface Props { kind: CatalogKind; }
 const { kind } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const items = withFrequency(kind);
@@ -11,7 +12,7 @@ const noun = kind === 'arguments' ? 'довод' : 'приём';
 <ol class="freq" id="catalog">
   {items.map(({ article, count }) => (
     <li data-text={`${article.title} ${article.summary}`.toLowerCase()}>
-      <span class="count">{count}<small>раз</small></span>
+      <span class="count" title={`Встречается в лекциях ${count} ${pluralRu(count, 'раз', 'раза', 'раз')}`}>{count}<small>{pluralRu(count, 'раз', 'раза', 'раз')}</small></span>
       <div>
         <a href={`${base}${kind}/${article.slug}/`}>{article.title}</a>
         <p>{article.summary}</p>
@@ -27,11 +28,10 @@ const noun = kind === 'arguments' ? 'довод' : 'приём';
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     let shown = 0;
-    rows.forEach((r) => {
-      const ok = !q || (r.dataset.text ?? '').includes(q);
-      r.hidden = !ok;
-      if (ok) shown++;
-    });
+    for (const r of rows) {
+      r.hidden = Boolean(q) && !(r.dataset.text ?? '').includes(q);
+      if (!r.hidden) shown++;
+    }
     empty.hidden = shown > 0;
   });
 </script>

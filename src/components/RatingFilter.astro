@@ -1,0 +1,27 @@
+---
+import RatingIcon from './RatingIcon.astro';
+import RatingLegend from './RatingLegend.astro';
+import { RATINGS, RATING_ORDER, type Claim } from '../lib/data';
+interface Props { claims: Claim[]; }
+const { claims } = Astro.props;
+const ratings = RATING_ORDER.map((r) => ({ r, n: claims.filter((c) => c.rating === r).length })).filter((x) => x.n > 0);
+---
+<section class="tools" aria-labelledby="tools-title">
+  <h2 class="tools-title" id="tools-title">Оценки <span>нажмите, чтобы скрыть или показать</span></h2>
+  <div class="filters">
+    {ratings.map(({ r, n }) => (
+      <button type="button" class={`filter r-${r}`} data-filter={r} aria-pressed="true">
+        <span class="filter-name"><RatingIcon rating={r} />{RATINGS[r].label}<span class="n">{n}</span></span>
+        <span class="filter-hint">{RATINGS[r].hint}</span>
+      </button>
+    ))}
+  </div>
+  <details class="legend-mobile">
+    <summary>Что значат цвета?</summary>
+    <RatingLegend />
+  </details>
+  <div class="tools-actions">
+    <button type="button" class="btn" id="expand-all">Развернуть всё</button>
+    <button type="button" class="btn" id="collapse-all">Свернуть всё</button>
+  </div>
+</section>

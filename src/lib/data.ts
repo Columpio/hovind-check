@@ -2,10 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import YAML from 'yaml';
 import { marked } from 'marked';
+import { timeFragment, type OffsetStep } from './time';
+
+export { formatTime, timeFragment } from './time';
 
 const DATA = path.join(process.cwd(), 'data');
 
 export type Rating = 'green' | 'neutral' | 'orange' | 'red' | 'purple';
+export type CatalogKind = 'arguments' | 'rhetoric';
 
 /** Порядок ключей — порядок в легенде: сначала важное. */
 export const RATINGS: Record<Rating, { label: string; hint: string }> = {
@@ -15,11 +19,8 @@ export const RATINGS: Record<Rating, { label: string; hint: string }> = {
   green: { label: 'Верно', hint: 'утверждение подтверждается' },
   neutral: { label: 'Нейтрально', hint: 'рассказ, шутка, переход; на довод не влияет' },
 };
+export const RATING_ORDER = Object.keys(RATINGS) as Rating[];
 
-export interface OffsetStep {
-  from: number;
-  offset: number;
-}
 export interface Platform {
   id: string | null;
   channel?: string;
@@ -31,7 +32,7 @@ export interface Lecture {
   slug: string;
   number: number;
   title: string;
-  kind?: 'lecture' | 'film';
+  kind?: 'film';
   author: string;
   source: string;
   voiceover: string;
@@ -62,6 +63,15 @@ export interface Occurrence {
   claim: Claim;
 }
 
+// Во время сборки одни и те же файлы нужны каждой странице: читаем их один раз.
+// В режиме разработки не кэшируем, чтобы правки данных были видны сразу.
+const cache = new Map<string, unknown>();
+function memo<T>(key: string, load: () => T): T {
+  if (import.meta.env.DEV) return load();
+  if (!cache.has(key)) cache.set(key, load());
+  return cache.get(key) as T;
+}
+
 const readYaml = <T>(file: string): T => YAML.parse(fs.readFileSync(file, 'utf8')) as T;
 
 export function md(text: string): string {
@@ -69,8 +79,8 @@ export function md(text: string): string {
 }
 
 export function getLectures(): Lecture[] {
-  return readYaml<Lecture[]>(path.join(DATA, 'lectures', 'lectures.yaml')).sort(
-    (a, b) => a.number - b.number,
+  return memo('lectures', () =>
+    readYaml<Lecture[]>(path.join(DATA, 'lectures', 'lectures.yaml')).sort((a, b) => a.number - b.number),
   );
 }
 
@@ -85,10 +95,41 @@ export function lectureLabel(l: Lecture): string {
   return l.kind === 'film' ? `Фильм ${l.title}` : `Лекция ${l.number}. ${l.title}`;
 }
 
+/** Ошибки разметки останавливают сборку: опечатка не должна превратиться в битую ссылку на сайте. */
+function checkClaims(slug: string, claims: Claim[]): void {
+  const known: Record<CatalogKind, Set<string>> = {
+    arguments: new Set(getArguments().map((a) => a.slug)),
+    rhetoric: new Set(getRhetoric().map((a) => a.slug)),
+  };
+  const ids = new Set<string>();
+  const fragments = new Map<string, string>();
+  for (const c of claims) {
+    const where = `data/lectures/${slug}/claims.yaml, утверждение ${c.id}`;
+    if (!c.id) throw new Error(`${where}: нет id`);
+    if (ids.has(c.id)) throw new Error(`${where}: id повторяется`);
+    ids.add(c.id);
+    if (!(c.rating in RATINGS)) throw new Error(`${where}: неизвестная оценка «${c.rating}»`);
+    if (!(c.start < c.end)) throw new Error(`${where}: start должен быть меньше end`);
+    const frag = timeFragment(c.start);
+    const twin = fragments.get(frag);
+    if (twin) throw new Error(`${where}: начинается в ту же секунду, что и ${twin}; ссылка #t=${frag} была бы неоднозначной`);
+    fragments.set(frag, c.id);
+    for (const kind of ['arguments', 'rhetoric'] as const) {
+      for (const tag of c[kind] ?? []) {
+        if (!known[kind].has(tag)) throw new Error(`${where}: нет статьи data/${kind}/${tag}.md`);
+      }
+    }
+  }
+}
+
 export function getClaims(slug: string): Claim[] {
-  const file = path.join(DATA, 'lectures', slug, 'claims.yaml');
-  if (!fs.existsSync(file)) return [];
-  return (readYaml<Claim[]>(file) ?? []).sort((a, b) => a.start - b.start);
+  return memo(`claims:${slug}`, () => {
+    const file = path.join(DATA, 'lectures', slug, 'claims.yaml');
+    if (!fs.existsSync(file)) return [];
+    const claims = (readYaml<Claim[]>(file) ?? []).sort((a, b) => a.start - b.start);
+    checkClaims(slug, claims);
+    return claims;
+  });
 }
 
 function parseArticle(file: string): Article {
@@ -104,19 +145,27 @@ function parseArticle(file: string): Article {
   };
 }
 
-function getArticles(dir: string): Article[] {
-  const full = path.join(DATA, dir);
-  if (!fs.existsSync(full)) return [];
-  return fs
-    .readdirSync(full)
-    .filter((f) => f.endsWith('.md') && f.toLowerCase() !== 'readme.md')
-    .map((f) => parseArticle(path.join(full, f)));
+function getArticles(kind: CatalogKind): Article[] {
+  return memo(`articles:${kind}`, () => {
+    const full = path.join(DATA, kind);
+    if (!fs.existsSync(full)) return [];
+    return fs
+      .readdirSync(full)
+      .filter((f) => f.endsWith('.md') && f.toLowerCase() !== 'readme.md')
+      .map((f) => parseArticle(path.join(full, f)));
+  });
 }
 
 export const getArguments = () => getArticles('arguments');
 export const getRhetoric = () => getArticles('rhetoric');
 
-export function occurrences(kind: 'arguments' | 'rhetoric', slug: string): Occurrence[] {
+export function getArticle(kind: CatalogKind, slug: string): Article {
+  const a = getArticles(kind).find((x) => x.slug === slug);
+  if (!a) throw new Error(`Нет статьи data/${kind}/${slug}.md`);
+  return a;
+}
+
+export function occurrences(kind: CatalogKind, slug: string): Occurrence[] {
   const result: Occurrence[] = [];
   for (const lecture of getLectures()) {
     for (const claim of getClaims(lecture.slug)) {
@@ -127,39 +176,20 @@ export function occurrences(kind: 'arguments' | 'rhetoric', slug: string): Occur
 }
 
 /** Статьи с частотой употребления, по убыванию частоты. */
-export function withFrequency(kind: 'arguments' | 'rhetoric') {
-  const articles = kind === 'arguments' ? getArguments() : getRhetoric();
-  return articles
+export function withFrequency(kind: CatalogKind) {
+  return getArticles(kind)
     .map((a) => ({ article: a, count: occurrences(kind, a.slug).length }))
     .sort((x, y) => y.count - x.count || x.article.title.localeCompare(y.article.title, 'ru'));
 }
 
 /** Связь довод↔приём: сколько раз встречаются в одних и тех же утверждениях. */
-export function related(kind: 'arguments' | 'rhetoric', slug: string): { article: Article; count: number }[] {
-  const otherKind = kind === 'arguments' ? 'rhetoric' : 'arguments';
-  const others = otherKind === 'arguments' ? getArguments() : getRhetoric();
+export function related(kind: CatalogKind, slug: string): { article: Article; count: number }[] {
+  const otherKind: CatalogKind = kind === 'arguments' ? 'rhetoric' : 'arguments';
   const counts = new Map<string, number>();
   for (const { claim } of occurrences(kind, slug)) {
     for (const s of claim[otherKind] ?? []) counts.set(s, (counts.get(s) ?? 0) + 1);
   }
-  return others
-    .filter((a) => counts.has(a.slug))
-    .map((a) => ({ article: a, count: counts.get(a.slug)! }))
+  return [...counts]
+    .map(([s, count]) => ({ article: getArticle(otherKind, s), count }))
     .sort((x, y) => y.count - x.count);
-}
-
-export function formatTime(sec: number): string {
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = Math.floor(sec % 60);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
-}
-
-/** Фрагмент ссылки: 12m34s / 1h02m03s. */
-export function timeFragment(sec: number): string {
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = Math.floor(sec % 60);
-  return h > 0 ? `${h}h${String(m).padStart(2, '0')}m${String(s).padStart(2, '0')}s` : `${m}m${String(s).padStart(2, '0')}s`;
 }

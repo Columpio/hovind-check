@@ -1,0 +1,15 @@
+---
+import { getLectures, getClaims, lectureLabel } from '../lib/data';
+const base = import.meta.env.BASE_URL;
+const lectures = getLectures().map((l) => ({ ...l, n: getClaims(l.slug).length }));
+---
+<ul class="cards">
+  {lectures.map((l) => (
+    <li>
+      <a class="card" href={`${base}lectures/${l.slug}/`}>
+        <span class="t">{lectureLabel(l)}</span>
+        <span class="s">{l.n > 0 ? `Разобрано утверждений: ${l.n}` : 'Разбор готовится, видео уже можно смотреть'}</span>
+      </a>
+    </li>
+  ))}
+</ul>

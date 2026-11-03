@@ -1,21 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getLectures, getClaims, lectureLabel } from '../../lib/data';
-const base = import.meta.env.BASE_URL;
-const lectures = getLectures().map((l) => ({ ...l, n: getClaims(l.slug).length }));
+import LectureCards from '../../components/LectureCards.astro';
 ---
 <Base title="Лекции" section="lectures">
   <div class="wrap narrow">
     <h1>Лекции</h1>
-    <ul class="cards">
-      {lectures.map((l) => (
-        <li>
-          <a class="card" href={`${base}lectures/${l.slug}/`}>
-            <span class="t">{lectureLabel(l)}</span>
-            <span class="s">{l.source}{l.n > 0 ? ` · утверждений: ${l.n}` : ''}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <p class="lead">«Семинар о сотворении» Кента Ховинда (7 лекций) и фильм «Ложь во имя науки», собранный из его выступлений.</p>
+    <LectureCards />
   </div>
 </Base>

@@ -1,0 +1,7 @@
+---
+import RatingIcon from './RatingIcon.astro';
+import { RATINGS, type Rating } from '../lib/data';
+interface Props { rating: Rating; }
+const { rating } = Astro.props;
+---
+<span class={`rating-pill r-${rating}`}><RatingIcon rating={rating} />{RATINGS[rating].label}</span>
