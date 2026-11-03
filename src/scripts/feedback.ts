@@ -9,7 +9,7 @@ const MAX_QUOTE = 1500;
 
 function init(root: HTMLElement) {
   const formUrl = root.dataset.form!;
-  const entries = JSON.parse(root.dataset.entries!) as { quote: string; link: string; page: string };
+  const entries = JSON.parse(root.dataset.entries!) as { quote: string; link: string; page?: string };
   const button = root.querySelector<HTMLButtonElement>('.fb-float')!;
   const main = document.getElementById('content')!;
 
@@ -23,7 +23,7 @@ function init(root: HTMLElement) {
     const params = new URLSearchParams({ usp: 'pp_url' });
     if (quote) params.set(entries.quote, quote.slice(0, MAX_QUOTE));
     params.set(entries.link, pageUrl(anchor));
-    params.set(entries.page, document.title);
+    if (entries.page) params.set(entries.page, document.title);
     return `${formUrl}?${params}`;
   }
 

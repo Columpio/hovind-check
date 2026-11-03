@@ -1,7 +1,7 @@
 # Обратная связь через предзаполненную Google Форму (см. data/README.md).
 # Пока formId = TODO, кнопки «Замечание» на сайте нет.
-formId: TODO
+# page — необязательное поле: в нашей форме его нет, URL страницы уже есть в link.
+formId: 1FAIpQLSfeaVOmUSB7-xsNHWRheODCqTAm_9y7tXM3g4UrDqqB0NO-JA
 entries:
-  quote: TODO
-  link: TODO
-  page: TODO
+  quote: entry.981160030
+  link: entry.1232573133

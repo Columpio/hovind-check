@@ -78,7 +78,7 @@ const readYaml = <T>(file: string): T => YAML.parse(fs.readFileSync(file, 'utf8'
 
 export interface Feedback {
   formUrl: string;
-  entries: { quote: string; link: string; page: string };
+  entries: { quote: string; link: string; page?: string };
 }
 
 /** Предзаполненная Google Форма для замечаний; null, пока форма не настроена. */
