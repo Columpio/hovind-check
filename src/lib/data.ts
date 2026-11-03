@@ -48,7 +48,6 @@ export interface Claim {
   text: string;
   rating: Rating;
   verdict: string;
-  details?: string;
   arguments?: string[];
   rhetoric?: string[];
 }
@@ -111,6 +110,9 @@ function checkClaims(slug: string, claims: Claim[]): void {
     ids.add(c.id);
     if (!(c.rating in RATINGS)) throw new Error(`${where}: неизвестная оценка «${c.rating}»`);
     if (!(c.start < c.end)) throw new Error(`${where}: start должен быть меньше end`);
+    // «Подробнее» состоит только из вставок статей: свой текст пишем в статью довода или приёма.
+    if ('details' in c) throw new Error(`${where}: поле details больше не используется; перенесите текст в статью довода или приёма`);
+    if ((c.arguments?.length ?? 0) > 1) throw new Error(`${where}: больше одного повторяющегося довода; оставьте один`);
     const frag = timeFragment(c.start);
     const twin = fragments.get(frag);
     if (twin) throw new Error(`${where}: начинается в ту же секунду, что и ${twin}; ссылка #t=${frag} была бы неоднозначной`);

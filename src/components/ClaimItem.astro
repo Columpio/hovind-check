@@ -1,6 +1,6 @@
 ---
 import RatingPill from './RatingPill.astro';
-import { formatTime, timeFragment, md, getArticle, type Claim } from '../lib/data';
+import { formatTime, timeFragment, getArticle, type Claim } from '../lib/data';
 interface Props { claim: Claim; }
 const { claim } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -14,7 +14,7 @@ const insets = [
   ...args.map((a) => ({ ...a, kind: 'arguments', label: 'Повторяющийся довод' })),
   ...rhet.map((r) => ({ ...r, kind: 'rhetoric', label: 'Риторический приём' })),
 ];
-const hasMore = Boolean(claim.details) || insets.length > 0;
+const hasMore = insets.length > 0;
 ---
 <article
   class={`claim r-${claim.rating}`}
@@ -51,7 +51,6 @@ const hasMore = Boolean(claim.details) || insets.length > 0;
     {hasMore && (
       <details class="more">
         <summary>Подробнее</summary>
-        {claim.details && <div class="prose" set:html={md(claim.details)} />}
         {insets.map((a) => (
           <details class={`inset inset-${a.kind}`}>
             <summary>
