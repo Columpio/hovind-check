@@ -76,6 +76,22 @@ function memo<T>(key: string, load: () => T): T {
 
 const readYaml = <T>(file: string): T => YAML.parse(fs.readFileSync(file, 'utf8')) as T;
 
+export interface Feedback {
+  formUrl: string;
+  entries: { quote: string; link: string; page: string };
+}
+
+/** Предзаполненная Google Форма для замечаний; null, пока форма не настроена. */
+export function getFeedback(): Feedback | null {
+  return memo('feedback', () => {
+    const file = path.join(DATA, 'feedback.yaml');
+    if (!fs.existsSync(file)) return null;
+    const cfg = readYaml<{ formId: string; entries: Feedback['entries'] }>(file);
+    if (!cfg?.formId || cfg.formId === 'TODO') return null;
+    return { formUrl: `https://docs.google.com/forms/d/e/${cfg.formId}/viewform`, entries: cfg.entries };
+  });
+}
+
 export function md(text: string): string {
   return marked.parse(text, { async: false }) as string;
 }

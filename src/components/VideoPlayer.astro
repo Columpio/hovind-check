@@ -1,9 +1,10 @@
 ---
-import { offsetSteps, type Lecture } from '../lib/data';
+import { offsetSteps, getFeedback, type Lecture } from '../lib/data';
 interface Props { lecture: Lecture; }
 const { lecture } = Astro.props;
 const ytId = lecture.youtube?.id ?? '';
 const rtId = lecture.rutube?.id ?? '';
+const feedback = getFeedback();
 ---
 <div
   class="player"
@@ -38,4 +39,5 @@ const rtId = lecture.rutube?.id ?? '';
     </button>
   </div>
   <p class="player-note">Нажмите на время у любого утверждения, и видео включится с этого места.</p>
+  {feedback && <p class="player-note">Нашли ошибку? Выделите текст, чтобы отправить замечание к этому месту.</p>}
 </div>

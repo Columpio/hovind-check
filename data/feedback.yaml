@@ -1,0 +1,7 @@
+# Обратная связь через предзаполненную Google Форму (см. data/README.md).
+# Пока formId = TODO, кнопки «Замечание» на сайте нет.
+formId: TODO
+entries:
+  quote: TODO
+  link: TODO
+  page: TODO

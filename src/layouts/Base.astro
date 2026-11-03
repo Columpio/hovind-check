@@ -2,6 +2,8 @@
 import '@fontsource-variable/literata';
 import '@fontsource-variable/golos-text';
 import '../styles/global.css';
+import Feedback from '../components/Feedback.astro';
+import { getFeedback } from '../lib/data';
 interface Props { title?: string; description?: string; section?: 'lectures' | 'arguments' | 'rhetoric' | 'about'; }
 const {
   title,
@@ -9,6 +11,7 @@ const {
   description = 'Подробный разбор лекций Кента Ховинда с точки зрения науки: тайм-коды, оценки и простые объяснения.',
 } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const feedback = getFeedback();
 const fullTitle = title ? `${title} — Семинар Ховинда: проверка фактов` : 'Семинар Ховинда: проверка фактов';
 const nav = [
   { id: 'lectures', href: `${base}lectures/`, label: 'Лекции' },
@@ -60,8 +63,16 @@ const nav = [
           правообладателям:{' '}<a href={`${base}about/#prava`}>права и контакты</a>.{' '}
           <a href="https://github.com/Columpio/hovind-check">Исходный код сайта</a>.
         </p>
+        {feedback && (
+          <p class="fb-footer">
+            Нашли ошибку или есть замечание?{' '}
+            <a href={feedback.formUrl} target="_blank" rel="noopener" data-feedback-link>Напишите нам</a>.
+            Чтобы сразу приложить цитату, выделите текст на странице.
+          </p>
+        )}
       </div>
     </footer>
+    <Feedback />
     <button type="button" class="to-top" id="to-top" aria-label="Наверх" title="Наверх">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
     </button>
