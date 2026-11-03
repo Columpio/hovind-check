@@ -18,7 +18,9 @@ const together = (n: number) => `вместе ${n} ${pluralRu(n, 'раз', 'ра
     <p class="meta"><a href={`${base}${kind}/`}>← {catalogTitle}</a></p>
     <h1>{article.title}</h1>
     <p class="lead">{article.summary}</p>
-    <div class="article-body prose" set:html={article.html} />
+    {article.pending
+      ? <p class="pending-note">Подробный разбор {kind === 'arguments' ? 'этого довода' : 'этого приёма'} готовится. Ниже — все места в лекциях, где он встречается, с нашими короткими ответами.</p>
+      : <div class="article-body prose" set:html={article.html} />}
 
     {rel.length > 0 && (
       <section>

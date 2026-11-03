@@ -15,6 +15,7 @@ const noun = kind === 'arguments' ? 'довод' : 'приём';
       <span class="count" title={`Встречается в лекциях ${count} ${pluralRu(count, 'раз', 'раза', 'раз')}`}>{count}<small>{pluralRu(count, 'раз', 'раза', 'раз')}</small></span>
       <div>
         <a href={`${base}${kind}/${article.slug}/`}>{article.title}</a>
+        {article.pending && <span class="pending-badge">разбор готовится</span>}
         <p>{article.summary}</p>
       </div>
     </li>

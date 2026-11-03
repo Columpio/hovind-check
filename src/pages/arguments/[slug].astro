@@ -1,8 +1,8 @@
 ---
 import ArticlePage from '../../components/ArticlePage.astro';
-import { getArguments } from '../../lib/data';
+import { withFrequency } from '../../lib/data';
 export function getStaticPaths() {
-  return getArguments().map((article) => ({ params: { slug: article.slug }, props: { article } }));
+  return withFrequency('arguments').map(({ article }) => ({ params: { slug: article.slug }, props: { article } }));
 }
 const { article } = Astro.props;
 ---

@@ -58,7 +58,9 @@ const hasMore = insets.length > 0;
               <span class="inset-title">{a.title}</span>
               <span class="inset-summary">{a.summary}</span>
             </summary>
-            <div class="prose" set:html={a.html} />
+            {a.pending
+              ? <p class="pending-note">Подробный разбор {a.kind === 'arguments' ? 'этого довода' : 'этого приёма'} готовится. Список мест, где он встречается, — на отдельной странице.</p>
+              : <div class="prose" set:html={a.html} />}
             <a class="inset-link" href={`${base}${a.kind}/${a.slug}/`}>Отдельная страница и все места, где он встречается →</a>
           </details>
         ))}

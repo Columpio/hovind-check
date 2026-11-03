@@ -56,7 +56,10 @@ export interface Article {
   title: string;
   summary: string;
   html: string;
+  /** Метка есть в словаре, но статьи ещё нет: показываем суть и места, текст «готовится». */
+  pending: boolean;
 }
+interface Tag { slug: string; title: string; summary: string; }
 export interface Occurrence {
   lecture: Lecture;
   claim: Claim;
@@ -97,8 +100,8 @@ export function lectureLabel(l: Lecture): string {
 /** Ошибки разметки останавливают сборку: опечатка не должна превратиться в битую ссылку на сайте. */
 function checkClaims(slug: string, claims: Claim[]): void {
   const known: Record<CatalogKind, Set<string>> = {
-    arguments: new Set(getArguments().map((a) => a.slug)),
-    rhetoric: new Set(getRhetoric().map((a) => a.slug)),
+    arguments: new Set(getTags('arguments').map((t) => t.slug)),
+    rhetoric: new Set(getTags('rhetoric').map((t) => t.slug)),
   };
   const ids = new Set<string>();
   const fragments = new Map<string, string>();
@@ -115,7 +118,7 @@ function checkClaims(slug: string, claims: Claim[]): void {
     if ((c.arguments?.length ?? 0) > 1) throw new Error(`${where}: больше одного повторяющегося довода; оставьте один`);
     const needsArticle = c.rating === 'red' || c.rating === 'orange' || c.rating === 'purple';
     if (needsArticle && !c.arguments?.length && !c.rhetoric?.length) {
-      throw new Error(`${where}: у оценки «${c.rating}» нужен довод или приём со статьёй, иначе в «Подробнее» нечего показать`);
+      throw new Error(`${where}: у оценки «${c.rating}» нужен довод или приём, иначе в «Подробнее» нечего показать`);
     }
     const frag = timeFragment(c.start);
     const twin = fragments.get(frag);
@@ -127,7 +130,7 @@ function checkClaims(slug: string, claims: Claim[]): void {
     previous = c;
     for (const kind of ['arguments', 'rhetoric'] as const) {
       for (const tag of c[kind] ?? []) {
-        if (!known[kind].has(tag)) throw new Error(`${where}: нет статьи data/${kind}/${tag}.md`);
+        if (!known[kind].has(tag)) throw new Error(`${where}: метки «${tag}» нет в data/tags.yaml (${kind})`);
       }
     }
   }
@@ -143,7 +146,12 @@ export function getClaims(slug: string): Claim[] {
   });
 }
 
-function parseArticle(file: string): Article {
+/** Словарь меток: каждая метка в разметке должна быть здесь. Статья к метке необязательна. */
+function getTags(kind: CatalogKind): Tag[] {
+  return memo(`tags:${kind}`, () => readYaml<Record<CatalogKind, Tag[]>>(path.join(DATA, 'tags.yaml'))[kind] ?? []);
+}
+
+function parseArticle(file: string): Omit<Article, 'pending'> {
   const raw = fs.readFileSync(file, 'utf8');
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   if (!m) throw new Error(`Нет frontmatter: ${file}`);
@@ -156,14 +164,24 @@ function parseArticle(file: string): Article {
   };
 }
 
+/** Все метки словаря; у кого есть статья, берём её заголовок, суть и текст. */
 function getArticles(kind: CatalogKind): Article[] {
   return memo(`articles:${kind}`, () => {
-    const full = path.join(DATA, kind);
-    if (!fs.existsSync(full)) return [];
-    return fs
-      .readdirSync(full)
-      .filter((f) => f.endsWith('.md') && f.toLowerCase() !== 'readme.md')
-      .map((f) => parseArticle(path.join(full, f)));
+    const dir = path.join(DATA, kind);
+    const written = new Map(
+      (fs.existsSync(dir) ? fs.readdirSync(dir) : [])
+        .filter((f) => f.endsWith('.md') && f.toLowerCase() !== 'readme.md')
+        .map((f) => parseArticle(path.join(dir, f)))
+        .map((a) => [a.slug, a]),
+    );
+    const tags = getTags(kind);
+    for (const slug of written.keys()) {
+      if (!tags.some((t) => t.slug === slug)) throw new Error(`Статья data/${kind}/${slug}.md: метки «${slug}» нет в data/tags.yaml`);
+    }
+    return tags.map((t) => {
+      const a = written.get(t.slug);
+      return a ? { ...a, pending: false } : { ...t, html: '', pending: true };
+    });
   });
 }
 
@@ -172,7 +190,7 @@ export const getRhetoric = () => getArticles('rhetoric');
 
 export function getArticle(kind: CatalogKind, slug: string): Article {
   const a = getArticles(kind).find((x) => x.slug === slug);
-  if (!a) throw new Error(`Нет статьи data/${kind}/${slug}.md`);
+  if (!a) throw new Error(`Метки «${slug}» нет в data/tags.yaml (${kind})`);
   return a;
 }
 
@@ -186,10 +204,11 @@ export function occurrences(kind: CatalogKind, slug: string): Occurrence[] {
   return result;
 }
 
-/** Статьи с частотой употребления, по убыванию частоты. */
+/** Метки, которые встречаются в разметке или уже имеют статью, по убыванию частоты. */
 export function withFrequency(kind: CatalogKind) {
   return getArticles(kind)
     .map((a) => ({ article: a, count: occurrences(kind, a.slug).length }))
+    .filter(({ article, count }) => count > 0 || !article.pending)
     .sort((x, y) => y.count - x.count || x.article.title.localeCompare(y.article.title, 'ru'));
 }
 

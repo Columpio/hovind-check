@@ -1,8 +1,8 @@
 ---
 import ArticlePage from '../../components/ArticlePage.astro';
-import { getRhetoric } from '../../lib/data';
+import { withFrequency } from '../../lib/data';
 export function getStaticPaths() {
-  return getRhetoric().map((article) => ({ params: { slug: article.slug }, props: { article } }));
+  return withFrequency('rhetoric').map(({ article }) => ({ params: { slug: article.slug }, props: { article } }));
 }
 const { article } = Astro.props;
 ---

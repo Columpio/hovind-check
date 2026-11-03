@@ -152,6 +152,12 @@ h3 { font-size: 1.05rem; }
 .freq .count small { display: block; font-size: 0.74rem; font-weight: 500; color: var(--muted); }
 .freq a { font-family: var(--font-ui); font-weight: 650; }
 .freq p { margin: 4px 0 0; color: var(--ink-2); font-size: 0.95rem; }
+.pending-badge {
+  display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
+  font-family: var(--font-ui); font-size: 0.74rem; font-weight: 500; color: var(--muted); border: 1px solid var(--line);
+}
+.pending-note { margin: 0.6em 0; font-family: var(--font-ui); font-size: 0.88rem; color: var(--muted); }
+.inset > .pending-note { padding: 0 14px; }
 
 .search { width: 100%; font: inherit; font-family: var(--font-ui); padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); margin-bottom: 14px; min-height: 48px; }
 
