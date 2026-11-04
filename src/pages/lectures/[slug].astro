@@ -16,6 +16,8 @@ export function getStaticPaths() {
 const { lecture, prev, next } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const claims = getClaims(lecture.slug);
+// Фильм — закадровый текст автора (А. Иванова) вперемешку с фрагментами Ховинда.
+const speaker = lecture.kind === 'film' ? 'В фильме говорится' : 'Ховинд говорит';
 ---
 <Base title={lectureLabel(lecture)} section="lectures">
   <div class="wrap">
@@ -36,7 +38,7 @@ const claims = getClaims(lecture.slug);
           <div class="draft-note">Разбор этой лекции готовится. Видео можно посмотреть уже сейчас.</div>
         ) : (
           <div class="claims" id="claims">
-            {claims.map((claim) => <ClaimItem claim={claim} />)}
+            {claims.map((claim) => <ClaimItem claim={claim} speaker={speaker} />)}
             <p class="empty-filter" id="empty-filter" hidden>Все утверждения скрыты. Включите хотя бы одну оценку в списке «Оценки».</p>
           </div>
         )}

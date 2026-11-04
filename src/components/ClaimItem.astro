@@ -1,8 +1,8 @@
 ---
 import RatingPill from './RatingPill.astro';
 import { formatTime, timeFragment, getArticle, type Claim } from '../lib/data';
-interface Props { claim: Claim; }
-const { claim } = Astro.props;
+interface Props { claim: Claim; speaker: string; }
+const { claim, speaker } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const frag = timeFragment(claim.start);
 const moreId = `${claim.id}-more`;
@@ -36,7 +36,7 @@ const hasMore = insets.length > 0;
   </div>
 
   <blockquote class="quote">
-    <span class="part-label">Ховинд говорит</span>
+    <span class="part-label">{speaker}</span>
     <p>{claim.text}</p>
   </blockquote>
 
