@@ -220,6 +220,8 @@ h3 { font-size: 1.05rem; }
 .prose figure.diagram svg { display: block; width: 100%; font-family: var(--font-ui); }
 .prose figure.diagram figcaption { margin-top: 8px; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); }
 .prose table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+/* Широкие таблицы на телефоне прокручиваются внутри себя, а не вместе со страницей. */
+@media (max-width: 640px) { .prose table { display: block; overflow-x: auto; } }
 .prose th, .prose td { border: 1px solid var(--line); padding: 6px 8px; }
 
 .btn {

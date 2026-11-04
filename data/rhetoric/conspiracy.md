@@ -14,6 +14,11 @@ videos:
 
 У такого объяснения есть особое свойство: его нельзя опровергнуть. Нет доказательств? Значит, хорошо прячут. Официальное расследование говорит другое? Значит, оно тоже куплено.
 
+<figure class="diagram">
+  <svg class="diagram-svg" viewBox="0 0 600 440" role="img" aria-labelledby="conspiracy-trap-t conspiracy-trap-d" xmlns="http://www.w3.org/2000/svg"><title id="conspiracy-trap-t">Ловушка конспирологии: любой исход ведёт к одному выводу</title><desc id="conspiracy-trap-d">Три случая: нашли «улику» — «вот доказательство»; улик нет — «значит, хорошо прячут»; проверка опровергла — «значит, её купили». Все три стрелки ведут к одному выводу: заговор есть.</desc><defs><marker id="conspiracy-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink-2)"/></marker></defs><g stroke="var(--line)" stroke-width="2.5" fill="var(--paper-2)"><rect x="10" y="20" width="320" height="100" rx="12"/><rect x="10" y="150" width="320" height="100" rx="12"/><rect x="10" y="280" width="320" height="100" rx="12"/></g><rect x="410" y="120" width="180" height="160" rx="14" fill="var(--r-red-bg)" stroke="var(--r-red)" stroke-width="3"/><g stroke="var(--ink-2)" stroke-width="3" fill="none" marker-end="url(#conspiracy-arrow)"><path d="M332 70 C 370 70, 380 150, 404 165"/><path d="M332 200 L404 200"/><path d="M332 330 C 370 330, 380 250, 404 235"/></g><g font-size="23" fill="currentColor"><text x="28" y="60" font-weight="700">Нашли «улику»</text><text x="28" y="96" font-style="italic" fill="var(--ink-2)">«Вот доказательство!»</text><text x="28" y="190" font-weight="700">Улик нет</text><text x="28" y="226" font-style="italic" fill="var(--ink-2)">«Значит, хорошо прячут»</text><text x="28" y="320" font-weight="700">Проверка опровергла</text><text x="28" y="356" font-style="italic" fill="var(--ink-2)">«Значит, её купили»</text></g><g font-size="28" font-weight="700" fill="var(--r-red)" text-anchor="middle"><text x="500" y="188">Заговор</text><text x="500" y="226">есть!</text></g><text x="300" y="424" text-anchor="middle" font-size="23" font-weight="700" fill="currentColor">Что бы ни случилось — вывод один</text></svg>
+  <figcaption>Объяснение, которое подходит к любому исходу, ничего не проверяет: его нельзя опровергнуть, а значит, нельзя и подтвердить. Схема: «Семинар Ховинда: проверка фактов», CC BY-SA 4.0.</figcaption>
+</figure>
+
 ## Как это звучит у Ховинда
 
 Больше всего этого в лекции 5: Рокфеллеры, Федеральный резерв, ЦРУ, масоны, войска ООН, микрочипы.
@@ -25,6 +30,12 @@ videos:
 ## Что на самом деле
 
 Проверяемые части таких историй обычно не подтверждаются. Национальный совет по безопасности на транспорте США четыре года расследовал гибель рейса TWA 800 и пришёл к выводу, что причиной был взрыв паров топлива в центральном баке крыла ([NTSB, расследование DCA96MA070](https://www.ntsb.gov/investigations/Pages/DCA96MA070.aspx)). Надпись *Novus ordo seclorum* на долларе её автор Чарльз Томсон в 1782 году объяснил как «начало новой американской эры», а глаз над пирамидой — как знак «вмешательства Провидения» ([Great Seal, объяснение 1782 года](https://www.greatseal.com/symbols/explanation.html)). А население Земли к 2000 году не сократилось до полумиллиарда, а продолжило расти и в 2022 году достигло 8 миллиардов ([ООН, «Народонаселение»](https://www.un.org/ru/global-issues/population)).
+
+| Что сказано в лекции | Что показала проверка |
+|---|---|
+| Рейс TWA 800 «умышленно сбит» | Взрыв паров топлива в баке (NTSB, 4 года расследования) |
+| Надпись на долларе — «новый мировой порядок без Бога» | Автор печати в 1782 году: «новая американская эра», глаз — знак Провидения |
+| Население сократят до полумиллиарда к 2000 году | Население росло и в 2022 году достигло 8 миллиардов |
 
 ## Пример
 
