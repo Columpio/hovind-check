@@ -1,0 +1,53 @@
+---
+import { formatTime, type ChannelVideo } from '../lib/data';
+interface Props { videos: ChannelVideo[]; }
+const { videos } = Astro.props;
+const CHANNEL = 'https://www.youtube.com/@В_начале_и_вокруг_него';
+const WORLDVIEW = 'https://www.youtube.com/playlist?list=PLdHB3SMueff-Ppt_hcyYE-ixRxbSNN7oX';
+---
+<section class="channel-videos" aria-labelledby="channel-videos-h">
+  <h2 id="channel-videos-h">Послушайте также наш разбор</h2>
+  {videos.length > 0 && (
+    <ul class="cv-list">
+      {videos.map((v) => (
+        <li class="cv">
+          <div class="cv-frame" data-id={v.id} data-t={v.t}>
+            <button type="button" class="cv-play" aria-label={`Смотреть фрагмент с ${formatTime(v.t)}: ${v.title}`}>
+              <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" width="480" height="360" />
+              <span class="cv-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+                с {formatTime(v.t)}
+              </span>
+            </button>
+          </div>
+          <div class="cv-text">
+            {v.note && <p class="cv-note">{v.note}</p>}
+            <p class="cv-title">
+              <a href={`https://www.youtube.com/watch?v=${v.id}&t=${v.t}s`} target="_blank" rel="noopener">{v.title}</a>
+              <span class="cv-time">· {formatTime(v.t)}</span>
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+  <p class="cv-more">
+    Все наши разборы — на канале <a href={CHANNEL} target="_blank" rel="noopener">«В начале и вокруг него»</a>.
+    Как верить, принимая науку, — в цикле <a href={WORLDVIEW} target="_blank" rel="noopener">«Библия и культура Древнего Востока»</a>.
+  </p>
+</section>
+
+<script>
+  // Лёгкий фасад: плеер YouTube грузится только по клику, сразу с нужной секунды.
+  for (const frame of document.querySelectorAll<HTMLElement>('.cv-frame')) {
+    frame.querySelector('.cv-play')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${frame.dataset.id}?start=${frame.dataset.t}&autoplay=1&rel=0`;
+      iframe.title = frame.querySelector('.cv-play')?.getAttribute('aria-label') ?? 'Видео';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    });
+  }
+</script>

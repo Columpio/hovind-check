@@ -1,13 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
 import RatingPill from './RatingPill.astro';
-import { occurrences, related, formatTime, timeFragment, lectureLabel, type Article, type CatalogKind } from '../lib/data';
+import ChannelVideos from './ChannelVideos.astro';
+import { occurrences, related, similar, backlinks, formatTime, timeFragment, lectureLabel, type Article, type CatalogKind } from '../lib/data';
 import { pluralRu } from '../lib/time';
 interface Props { kind: CatalogKind; article: Article; }
 const { kind, article } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const occ = occurrences(kind, article.slug);
 const rel = related(kind, article.slug);
+const sim = similar(kind, article.slug);
+const back = backlinks(kind, article.slug);
+const similarTitle = kind === 'arguments' ? 'Похожие доводы' : 'Похожие приёмы';
+const kindLabel = (k: CatalogKind) => (k === 'arguments' ? 'довод' : 'приём');
 const otherKind = kind === 'arguments' ? 'rhetoric' : 'arguments';
 const catalogTitle = kind === 'arguments' ? 'Каталог доводов' : 'Риторические приёмы';
 const relTitle = kind === 'arguments' ? 'Какими приёмами Ховинд подкрепляет этот довод' : 'В каких доводах встречается этот приём';
@@ -22,12 +27,37 @@ const together = (n: number) => `вместе ${n} ${pluralRu(n, 'раз', 'ра
       ? <p class="pending-note">Подробный разбор {kind === 'arguments' ? 'этого довода' : 'этого приёма'} готовится. Ниже — все места в лекциях, где он встречается, с нашими короткими ответами.</p>
       : <div class="article-body prose" set:html={article.html} />}
 
+    {!article.pending && <ChannelVideos videos={article.videos} />}
+
     {rel.length > 0 && (
       <section>
         <h2>{relTitle}</h2>
         <ul class="chips">
           {rel.map(({ article: a, count }) => (
             <li><a class="chip" href={`${base}${otherKind}/${a.slug}/`}><b>{a.title}</b><span class="n">· {together(count)}</span></a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {sim.length > 0 && (
+      <section>
+        <h2>{similarTitle}</h2>
+        <p class="meta">Ховинд часто говорит об этом рядом, или на них ссылается разбор.</p>
+        <ul class="chips">
+          {sim.map((a) => (
+            <li><a class="chip" href={`${base}${kind}/${a.slug}/`}><b>{a.title}</b></a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {back.length > 0 && (
+      <section>
+        <h2>На этот разбор ссылаются</h2>
+        <ul class="chips">
+          {back.map(({ kind: k, article: a }) => (
+            <li><a class="chip" href={`${base}${k}/${a.slug}/`}><b>{a.title}</b>{k !== kind && <span class="n">· {kindLabel(k)}</span>}</a></li>
           ))}
         </ul>
       </section>

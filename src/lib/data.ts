@@ -56,8 +56,18 @@ export interface Article {
   title: string;
   summary: string;
   html: string;
+  /** Фрагменты видео нашего канала, где разбирается эта тема. */
+  videos: ChannelVideo[];
   /** Метка есть в словаре, но статьи ещё нет: показываем суть и места, текст «готовится». */
   pending: boolean;
+}
+export interface ChannelVideo {
+  /** YouTube id. */
+  id: string;
+  /** Секунда начала фрагмента. */
+  t: number;
+  title: string;
+  note?: string;
 }
 interface Tag { slug: string; title: string; summary: string; }
 export interface Occurrence {
@@ -171,12 +181,19 @@ function parseArticle(file: string): Omit<Article, 'pending'> {
   const raw = fs.readFileSync(file, 'utf8');
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   if (!m) throw new Error(`Нет frontmatter: ${file}`);
-  const meta = YAML.parse(m[1]) as { title: string; summary: string };
+  const meta = YAML.parse(m[1]) as { title: string; summary: string; videos?: ChannelVideo[] };
+  const videos = meta.videos ?? [];
+  for (const v of videos) {
+    if (!/^[\w-]{11}$/.test(String(v.id)) || typeof v.t !== 'number' || v.t < 0 || !v.title) {
+      throw new Error(`${file}: в videos нужны id (11 символов YouTube), t (секунды ≥ 0) и title: ${JSON.stringify(v)}`);
+    }
+  }
   return {
     slug: path.basename(file, '.md'),
     title: meta.title,
     summary: meta.summary,
     html: md(m[2]),
+    videos,
   };
 }
 
@@ -196,7 +213,7 @@ function getArticles(kind: CatalogKind): Article[] {
     }
     return tags.map((t) => {
       const a = written.get(t.slug);
-      return a ? { ...a, pending: false } : { ...t, html: '', pending: true };
+      return a ? { ...a, pending: false } : { ...t, html: '', videos: [], pending: true };
     });
   });
 }
@@ -238,4 +255,78 @@ export function related(kind: CatalogKind, slug: string): { article: Article; co
   return [...counts]
     .map(([s, count]) => ({ article: getArticle(otherKind, s), count }))
     .sort((x, y) => y.count - x.count);
+}
+
+export interface ArticleRef { kind: CatalogKind; article: Article; }
+const refKey = (kind: CatalogKind, slug: string) => `${kind}/${slug}`;
+
+/** Какие статьи каталога упомянуты ссылкой в тексте статьи: ключ «kind/slug» → множество ключей. */
+function textLinks(): Map<string, Set<string>> {
+  return memo('textLinks', () => {
+    const links = new Map<string, Set<string>>();
+    for (const kind of ['arguments', 'rhetoric'] as CatalogKind[]) {
+      for (const a of getArticles(kind)) {
+        const self = refKey(kind, a.slug);
+        const out = new Set<string>();
+        for (const m of a.html.matchAll(/href="[^"]*\/(arguments|rhetoric)\/([a-z0-9-]+)\/?["#]/g)) {
+          const key = refKey(m[1] as CatalogKind, m[2]);
+          if (key !== self && getArticles(m[1] as CatalogKind).some((x) => x.slug === m[2])) out.add(key);
+        }
+        links.set(self, out);
+      }
+    }
+    return links;
+  });
+}
+
+/** Статьи (любого каталога), в тексте которых есть ссылка на эту. */
+export function backlinks(kind: CatalogKind, slug: string, limit = 6): ArticleRef[] {
+  const target = refKey(kind, slug);
+  const result: ArticleRef[] = [];
+  for (const [key, out] of textLinks()) {
+    if (!out.has(target)) continue;
+    const [k, s] = key.split('/') as [CatalogKind, string];
+    result.push({ kind: k, article: getArticle(k, s) });
+  }
+  return result.sort((x, y) => x.article.title.localeCompare(y.article.title, 'ru')).slice(0, limit);
+}
+
+/** Соседство в лекциях: метки одного каталога в том же или в соседних (±2) утверждениях. */
+const NEAR = 2;
+function proximity(kind: CatalogKind): Map<string, Map<string, number>> {
+  return memo(`proximity:${kind}`, () => {
+    const score = new Map<string, Map<string, number>>();
+    const add = (a: string, b: string) => {
+      if (a === b) return;
+      const row = score.get(a) ?? new Map<string, number>();
+      row.set(b, (row.get(b) ?? 0) + 1);
+      score.set(a, row);
+    };
+    for (const lecture of getLectures()) {
+      const claims = getClaims(lecture.slug);
+      claims.forEach((claim, i) => {
+        const near = new Set<string>();
+        for (let j = Math.max(0, i - NEAR); j <= Math.min(claims.length - 1, i + NEAR); j++) {
+          for (const s of claims[j][kind] ?? []) near.add(s);
+        }
+        for (const a of claim[kind] ?? []) for (const b of near) add(a, b);
+      });
+    }
+    return score;
+  });
+}
+
+/** Похожие статьи того же каталога: соседство в лекциях плюс ссылки из текста этой статьи. */
+const TEXT_LINK_WEIGHT = 3;
+export function similar(kind: CatalogKind, slug: string, limit = 6): Article[] {
+  const score = new Map(proximity(kind).get(slug) ?? []);
+  for (const key of textLinks().get(refKey(kind, slug)) ?? []) {
+    const [k, s] = key.split('/');
+    if (k === kind) score.set(s, (score.get(s) ?? 0) + TEXT_LINK_WEIGHT);
+  }
+  return [...score]
+    .map(([s, n]) => ({ article: getArticle(kind, s), n }))
+    .sort((x, y) => y.n - x.n || x.article.title.localeCompare(y.article.title, 'ru'))
+    .slice(0, limit)
+    .map((x) => x.article);
 }
