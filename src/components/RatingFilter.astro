@@ -7,7 +7,7 @@ const { claims } = Astro.props;
 const ratings = RATING_ORDER.map((r) => ({ r, n: claims.filter((c) => c.rating === r).length })).filter((x) => x.n > 0);
 ---
 <section class="tools" aria-labelledby="tools-title">
-  <h2 class="tools-title" id="tools-title">Оценки <span>нажмите, чтобы скрыть или показать</span></h2>
+  <h2 class="tools-title" id="tools-title">Оценки <span>нажмите на цвет, чтобы спрятать такие утверждения; повторное нажатие их вернёт</span></h2>
   <div class="filters">
     {ratings.map(({ r, n }) => (
       <button type="button" class={`filter r-${r}`} data-filter={r} aria-pressed="true">
