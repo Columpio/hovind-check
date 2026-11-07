@@ -7,6 +7,9 @@ research/
 # Owner's task list and agent rules: personal, local only.
 TODO.md
 AGENTS.md
+# Agent guides (local); DESIGN.md stays public.
+docs/*
+!docs/DESIGN.md
 
 # Build and dependencies
 node_modules/
