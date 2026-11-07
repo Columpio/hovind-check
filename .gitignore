@@ -1,5 +1,7 @@
 # Private materials: videos, chat export, full transcripts. Never commit.
 resources/
+# Reader feedback inbox for the owner (emails inside). Never commit.
+feedback-inbox/
 
 # Working research notes (sources, licensing, decisions): local only.
 research/
