@@ -9,7 +9,7 @@ summary: "Предания о потопе действительно есть �
 
 ## Что верно
 
-Предания о великом потопе правда широко распространены в Евразии и Америке ([Britannica, «Flood myth»](https://www.britannica.com/topic/flood-myth) (на англ.)). Ещё в начале XX века православный профессор Д. И. Введенский собрал десятки таких преданий и считал их отзвуком библейского события ([«Библейское повествование о потопе в его отношении к данным геологии и преданиям народов»](https://azbyka.ru/otechnik/Dmitrij_Vvedenskij/biblejskoe-povestvovanie-o-potope-v-ego-otnoshenii-k-dannym-geologii-i-predanijam-narodov/)).
+Предания о великом потопе правда широко распространены в Евразии и Америке ([Britannica, «Flood myth»](https://www.britannica.com/topic/flood-myth) (на англ.)). Ещё в начале XX века православный профессор Д. И. Введенский собрал десятки таких преданий и считал их отзвуком библейского события ([«Библейское повествование о потопе в его отношении к данным геологии и преданиям народов»](https://web.archive.org/web/20260116124711/https://azbyka.ru/otechnik/Dmitrij_Vvedenskij/biblejskoe-povestvovanie-o-potope-v-ego-otnoshenii-k-dannym-geologii-i-predanijam-narodov/) (архивная копия)).
 
 ## Что подменено
 
