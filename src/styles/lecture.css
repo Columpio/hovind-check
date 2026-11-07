@@ -172,6 +172,12 @@
 .inset-summary { font-size: 0.95rem; color: var(--ink-2); }
 .inset > .prose { padding: 0 14px; }
 .inset-link { display: inline-block; margin: 4px 14px 12px; font-family: var(--font-ui); font-size: 0.84rem; }
+/* Тихая ссылка под вставками: заметна, но не спорит с разбором. */
+.claim-feedback {
+  display: inline-flex; align-items: center; min-height: var(--tap); margin-top: 6px;
+  font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted);
+}
+.claim-feedback:hover { color: var(--accent); }
 
 .empty-filter { font-family: var(--font-ui); color: var(--muted); text-align: center; padding: 24px; }
 

@@ -24,6 +24,7 @@ const speaker = lecture.kind === 'film' ? 'В фильме говорится' :
     <header class="lecture-head">
       <p class="meta"><a href={`${base}lectures/`}>← Все лекции</a></p>
       <h1>{lectureLabel(lecture)}</h1>
+      {lecture.note && <p class="calm-note">{lecture.note}</p>}
       {lecture.draft && <div class="draft-note">Черновик: разбор ещё не вычитан. Подробные статьи к части доводов готовятся.</div>}
     </header>
 

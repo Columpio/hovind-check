@@ -27,9 +27,9 @@ function init(root: HTMLElement) {
     return `${formUrl}?${params}`;
   }
 
-  // Ссылки «Напишите нам» без цитаты: в футере и на странице лекции.
+  // Ссылки без цитаты: «Напишите нам» в футере и «Замечание к этому месту» в карточке (с якорем утверждения).
   document.querySelectorAll<HTMLAnchorElement>('[data-feedback-link]').forEach((a) => {
-    a.addEventListener('click', () => (a.href = formLink('')));
+    a.addEventListener('click', () => (a.href = formLink('', a.dataset.feedbackAnchor)));
   });
 
   let current: { quote: string; anchor?: string } | null = null;

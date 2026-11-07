@@ -1,17 +1,18 @@
 ---
 import RatingPill from './RatingPill.astro';
-import { formatTime, timeFragment, getArticle, type Claim } from '../lib/data';
+import { formatTime, timeFragment, getArticle, getFeedback, type Claim } from '../lib/data';
 interface Props { claim: Claim; speaker: string; }
 const { claim, speaker } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const frag = timeFragment(claim.start);
 const moreId = `${claim.id}-more`;
+const feedback = getFeedback();
 const args = (claim.arguments ?? []).map((s) => getArticle('arguments', s));
 const rhet = (claim.rhetoric ?? []).map((s) => getArticle('rhetoric', s));
 // Вставки доводов и приёмов устроены одинаково: раскрывающийся блок с полным текстом статьи.
 const insets = [
-  ...args.map((a) => ({ ...a, kind: 'arguments', label: 'Повторяющийся довод' })),
-  ...rhet.map((r) => ({ ...r, kind: 'rhetoric', label: 'Риторический приём' })),
+  ...args.map((a) => ({ ...a, kind: 'arguments', label: 'Довод Ховинда, он его часто повторяет', more: 'Где ещё Ховинд это говорит →' })),
+  ...rhet.map((r) => ({ ...r, kind: 'rhetoric', label: 'Приём в споре', more: 'Где ещё встречается этот приём →' })),
 ];
 const hasMore = insets.length > 0;
 ---
@@ -55,7 +56,7 @@ const hasMore = insets.length > 0;
               <span class="inset-title">{a.title}</span>
               <span class="inset-summary">{a.summary}</span>
               <span class="inset-cut" aria-hidden="true">
-                <span class="when-closed">{a.pending ? 'Подробнее' : 'Читать разбор'}</span>
+                <span class="when-closed">{a.pending ? 'Разбор готовится' : 'Весь разбор'}</span>
                 <span class="when-open">Свернуть</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
               </span>
@@ -63,13 +64,18 @@ const hasMore = insets.length > 0;
             {a.pending
               ? <p class="pending-note">Подробный разбор {a.kind === 'arguments' ? 'этого довода' : 'этого приёма'} готовится. Список мест, где он встречается, — на отдельной странице.</p>
               : <div class="prose" set:html={a.html} />}
-            <a class="inset-link" href={`${base}${a.kind}/${a.slug}/`}>Отдельная страница и все места, где он встречается →</a>
+            <a class="inset-link" href={`${base}${a.kind}/${a.slug}/`}>{a.more}</a>
           </details>
         ))}
+        {feedback && (
+          <a class="claim-feedback" href={feedback.formUrl} target="_blank" rel="noopener" data-feedback-link data-feedback-anchor={`#t=${frag}`}>
+            Написать замечание к этому месту
+          </a>
+        )}
       </div>
       <button type="button" class="fold claim-cut" aria-expanded="false" aria-controls={moreId}>
-        <span class="when-closed">Подробнее</span>
-        <span class="when-open">Скрыть подробности</span>
+        <span class="when-closed">Почему так</span>
+        <span class="when-open">Скрыть объяснение</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </button>
     </>

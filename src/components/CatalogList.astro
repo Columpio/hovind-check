@@ -4,34 +4,52 @@ import { pluralRu } from '../lib/time';
 interface Props { kind: CatalogKind; }
 const { kind } = Astro.props;
 const base = import.meta.env.BASE_URL;
-const items = withFrequency(kind);
+const all = withFrequency(kind);
+// Политические доводы лекции 5 идут отдельной группой внизу, чтобы не смешивать их с научными.
+const items = all.filter(({ article }) => !article.group);
+const politics = all.filter(({ article }) => article.group === 'politics');
 const noun = kind === 'arguments' ? 'довод' : 'приём';
 ---
 <label class="sr-only" for="catalog-search">Поиск</label>
 <input class="search" id="catalog-search" type="search" placeholder={`Найти ${noun}: например, «Луна»`} autocomplete="off" />
-<ol class="freq" id="catalog">
-  {items.map(({ article, count }) => (
-    <li data-text={`${article.title} ${article.summary}`.toLowerCase()}>
-      <span class="count" title={`Встречается в лекциях ${count} ${pluralRu(count, 'раз', 'раза', 'раз')}`}>{count}<small>{pluralRu(count, 'раз', 'раза', 'раз')}</small></span>
-      <div>
-        <a href={`${base}${kind}/${article.slug}/`}>{article.title}</a>
-        {article.pending && <span class="pending-badge">разбор готовится</span>}
-        <p>{article.summary}</p>
-      </div>
-    </li>
-  ))}
-</ol>
+{[{ list: items, group: null }, { list: politics, group: 'politics' }].filter(({ list }) => list.length > 0).map(({ list, group }) => (
+  <section class="catalog-group" data-group={group ?? 'main'} aria-labelledby={group ? 'catalog-politics' : undefined}>
+    {group === 'politics' && (
+      <>
+        <h2 id="catalog-politics">Политика и заговоры (лекция 5)</h2>
+        <p class="calm-note">Своей позиции по политике у нас нет: проверяем только факты — даты, цитаты, документы.</p>
+      </>
+    )}
+    <ol class="freq">
+      {list.map(({ article, count }) => (
+        <li data-text={`${article.title} ${article.summary}`.toLowerCase()}>
+          <span class="count" title={`Встречается в лекциях ${count} ${pluralRu(count, 'раз', 'раза', 'раз')}`}>{count}<small>{pluralRu(count, 'раз', 'раза', 'раз')}</small></span>
+          <div>
+            <a href={`${base}${kind}/${article.slug}/`}>{article.title}</a>
+            {article.pending && <span class="pending-badge">разбор готовится</span>}
+            <p>{article.summary}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+))}
 <p class="meta" id="catalog-empty" hidden>Ничего не нашлось. Попробуйте другое слово.</p>
 <script>
   const input = document.getElementById('catalog-search') as HTMLInputElement;
-  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('#catalog li'));
+  const groups = Array.from(document.querySelectorAll<HTMLElement>('.catalog-group'));
   const empty = document.getElementById('catalog-empty')!;
   input.addEventListener('input', () => {
     const q = input.value.trim().toLowerCase();
     let shown = 0;
-    for (const r of rows) {
-      r.hidden = Boolean(q) && !(r.dataset.text ?? '').includes(q);
-      if (!r.hidden) shown++;
+    for (const g of groups) {
+      let inGroup = 0;
+      for (const r of g.querySelectorAll<HTMLLIElement>('li')) {
+        r.hidden = Boolean(q) && !(r.dataset.text ?? '').includes(q);
+        if (!r.hidden) inGroup++;
+      }
+      g.hidden = inGroup === 0;
+      shown += inGroup;
     }
     empty.hidden = shown > 0;
   });

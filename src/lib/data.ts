@@ -13,8 +13,8 @@ export type CatalogKind = 'arguments' | 'rhetoric';
 
 /** Порядок ключей — порядок в легенде: сначала важное. */
 export const RATINGS: Record<Rating, { label: string; hint: string }> = {
-  red: { label: 'Неверно', hint: 'противоречит фактам или науке' },
-  orange: { label: 'Полуправда', hint: 'формально верно, но подано так, чтобы ввести в заблуждение' },
+  red: { label: 'Неверно', hint: 'не совпадает с проверяемыми фактами' },
+  orange: { label: 'Полуправда', hint: 'отчасти правда, но вывод из неё неверный' },
   purple: { label: 'Богословский вопрос', hint: 'спорная трактовка, возможны разные позиции' },
   green: { label: 'Верно', hint: 'утверждение подтверждается' },
   neutral: { label: 'Нейтрально', hint: 'рассказ, шутка, переход; на довод не влияет' },
@@ -40,6 +40,8 @@ export interface Lecture {
   youtube: Platform;
   rutube: Platform;
   draft?: boolean;
+  /** Короткое пояснение под заголовком страницы лекции. */
+  note?: string;
 }
 export interface Claim {
   id: string;
@@ -60,6 +62,7 @@ export interface Article {
   videos: ChannelVideo[];
   /** Метка есть в словаре, но статьи ещё нет: показываем суть и места, текст «готовится». */
   pending: boolean;
+  group?: TagGroup;
 }
 export interface ChannelVideo {
   /** YouTube id. */
@@ -69,7 +72,9 @@ export interface ChannelVideo {
   title: string;
   note?: string;
 }
-interface Tag { slug: string; title: string; summary: string; }
+/** Тематическая группа в каталоге: такие доводы идут отдельным блоком внизу. */
+export type TagGroup = 'politics';
+interface Tag { slug: string; title: string; summary: string; group?: TagGroup; }
 export interface Occurrence {
   lecture: Lecture;
   claim: Claim;
@@ -139,12 +144,12 @@ function checkClaims(slug: string, claims: Claim[]): void {
     ids.add(c.id);
     if (!(c.rating in RATINGS)) throw new Error(`${where}: неизвестная оценка «${c.rating}»`);
     if (!(c.start < c.end)) throw new Error(`${where}: start должен быть меньше end`);
-    // «Подробнее» состоит только из вставок статей: свой текст пишем в статью довода или приёма.
+    // «Почему так» состоит только из вставок статей: свой текст пишем в статью довода или приёма.
     if ('details' in c) throw new Error(`${where}: поле details больше не используется; перенесите текст в статью довода или приёма`);
     if ((c.arguments?.length ?? 0) > 1) throw new Error(`${where}: больше одного повторяющегося довода; оставьте один`);
     const needsArticle = c.rating === 'red' || c.rating === 'orange' || c.rating === 'purple';
     if (needsArticle && !c.arguments?.length && !c.rhetoric?.length) {
-      throw new Error(`${where}: у оценки «${c.rating}» нужен довод или приём, иначе в «Подробнее» нечего показать`);
+      throw new Error(`${where}: у оценки «${c.rating}» нужен довод или приём, иначе в «Почему так» нечего показать`);
     }
     const frag = timeFragment(c.start);
     const twin = fragments.get(frag);
@@ -213,7 +218,7 @@ function getArticles(kind: CatalogKind): Article[] {
     }
     return tags.map((t) => {
       const a = written.get(t.slug);
-      return a ? { ...a, pending: false } : { ...t, html: '', videos: [], pending: true };
+      return a ? { ...a, group: t.group, pending: false } : { ...t, html: '', videos: [], pending: true };
     });
   });
 }

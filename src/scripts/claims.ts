@@ -33,7 +33,7 @@ export class ClaimList {
     return c && t >= Number(c.dataset.start) && t < Number(c.dataset.end) ? c : null;
   }
 
-  /** Цитата и вердикт видны всегда; раскрывается только «Подробнее» со вставками. */
+  /** Цитата и вердикт видны всегда; раскрывается только «Почему так» со вставками. */
   isOpen(c: HTMLElement): boolean {
     const more = c.querySelector<HTMLElement>('.more');
     return Boolean(more && !more.hidden);

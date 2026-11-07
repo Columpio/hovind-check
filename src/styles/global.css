@@ -139,6 +139,13 @@ h3 { font-size: 1.05rem; }
   border-radius: 8px; padding: 10px 14px; margin: 12px 0;
 }
 
+/* Спокойное пояснение: не предупреждение, а слово от нас (заметка у лекции, вводная к группе). */
+.calm-note {
+  font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.5;
+  background: var(--accent-soft); color: var(--ink); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 10px 14px; margin: 12px 0;
+}
+
 /* Карточки и таблицы каталогов */
 .cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); padding: 0; margin: 0; list-style: none; }
 .card { display: block; height: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; text-decoration: none; color: inherit; box-shadow: var(--shadow); }
@@ -152,6 +159,7 @@ h3 { font-size: 1.05rem; }
 .freq .count small { display: block; font-size: 0.74rem; font-weight: 500; color: var(--muted); }
 .freq a { font-family: var(--font-ui); font-weight: 650; }
 .freq p { margin: 4px 0 0; color: var(--ink-2); font-size: 0.95rem; }
+.catalog-group + .catalog-group { margin-top: 2.5rem; }
 .pending-badge {
   display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; vertical-align: 2px;
   font-family: var(--font-ui); font-size: 0.74rem; font-weight: 500; color: var(--muted); border: 1px solid var(--line);
