@@ -10,28 +10,29 @@ const base = import.meta.env.BASE_URL;
       а как же тогда Адам, грехопадение, шесть дней творения? Это хороший и честный вопрос.
     </p>
     <p>
-      На этом сайте мы разбираем только научные утверждения Ховинда и на него не отвечаем, чтобы не смешивать одно с
-      другим. Многие христиане разных церквей принимают эволюцию и при этом исповедуют тот же Символ веры, что и все
-      христиане. А верить, что Бог сотворил мир за шесть обычных суток, тоже законная христианская позиция:
-      мы не просим от неё отказываться.
+      На этом сайте мы разбираем только научные утверждения Ховинда и на этот вопрос здесь не отвечаем, чтобы не
+      смешивать одно с другим. Многие христиане разных церквей принимают эволюцию и при этом исповедуют тот же Символ
+      веры, что и все христиане. А верить, что Бог сотворил мир за шесть обычных суток, тоже законная христианская
+      позиция: мы не просим от неё отказываться.
     </p>
 
     <h2>Где мы об этом говорим</h2>
-    <p>Подробно об этом мы рассказываем на нашем YouTube-канале. Начните с первого плейлиста:</p>
-    <ul>
+    <p>Подробно об этом мы рассказываем на нашем YouTube-канале.</p>
+    <a class="card start-card" href="https://www.youtube.com/playlist?list=PLdHB3SMueff-Ppt_hcyYE-ixRxbSNN7oX">
+      <span class="kicker">Начните отсюда</span>
+      <span class="t">«Библия и культура Древнего Востока (Мировоззренческий подход)»</span>
+      <span class="s">Как понимали Бытие его первые читатели и как верить, не споря с наукой.</span>
+    </a>
+    <ul class="more-list">
       <li>
-        <a href="https://www.youtube.com/playlist?list=PLdHB3SMueff-Ppt_hcyYE-ixRxbSNN7oX">«Библия и культура Древнего Востока (Мировоззренческий подход)»</a>
-        — как понимали Бытие его первые читатели и как верить, не споря с наукой. Начните отсюда
+        <a href="https://www.youtube.com/playlist?list=PLdHB3SMueff_ShTK_FhomWCeYok_MGH52">«Научные теории для неверующих в них»</a>{' '}—
+        почему учёные принимают эволюцию: простыми словами для тех, кто в ней сомневается.
       </li>
       <li>
-        <a href="https://www.youtube.com/playlist?list=PLdHB3SMueff_ShTK_FhomWCeYok_MGH52">«Научные теории для неверующих в них»</a>
-        — почему учёные принимают эволюцию: простыми словами для тех, кто в ней сомневается
+        <a href="https://www.youtube.com/playlist?list=PLdHB3SMueff9xCZyFp8nv6EOz3Q7_E3Hj">Наш разбор лекций Ховинда на видео</a>.
       </li>
       <li>
-        <a href="https://www.youtube.com/playlist?list=PLdHB3SMueff9xCZyFp8nv6EOz3Q7_E3Hj">Наш разбор лекций Ховинда на видео</a>
-      </li>
-      <li>
-        <a href="https://www.youtube.com/channel/UCO6L9ojVzwAsCO7PSlGHwpQ">Наш канал «В начале и вокруг него»</a>
+        <a href="https://www.youtube.com/channel/UCO6L9ojVzwAsCO7PSlGHwpQ">Наш канал «В начале и вокруг него»</a>.
       </li>
     </ul>
 
@@ -41,9 +42,31 @@ const base = import.meta.env.BASE_URL;
       и как христиане разных церквей соединяют веру с данными науки. Пока его нет, смотрите наши плейлисты.
     </p>
     <p>
-      А если вы пришли сюда из разбора, вернитесь к <a href={`${base}lectures/`}>лекциям</a> или к
-      <a href={`${base}arguments/`}>каталогу доводов</a>. Кто мы и зачем делаем этот сайт, рассказано на странице
+      А если вы пришли сюда из разбора, вернитесь к <a href={`${base}lectures/`}>лекциям</a> или{' '}
+      к <a href={`${base}arguments/`}>каталогу доводов</a>. Кто мы и зачем делаем этот сайт, рассказано на странице{' '}
       <a href={`${base}about/`}>«О проекте»</a>.
     </p>
   </div>
 </Base>
+
+<style>
+  .start-card {
+    height: auto;
+    margin-block: 0.8rem 1.4rem;
+    border-color: var(--accent);
+  }
+  .start-card .t {
+    margin-top: 4px;
+  }
+  .start-card .kicker {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+  }
+  .more-list li {
+    margin-bottom: 0.6em;
+  }
+</style>

@@ -9,14 +9,25 @@ const all = withFrequency(kind);
 const items = all.filter(({ article }) => !article.group);
 const politics = all.filter(({ article }) => article.group === 'politics');
 const noun = kind === 'arguments' ? 'довод' : 'приём';
+// Пример в подсказке должен что-то находить в этом каталоге.
+const example = kind === 'arguments' ? 'Луна' : 'цитата';
+const hasGroups = politics.length > 0 && items.length > 0;
+const mainTitle = 'Наука и Библия';
 ---
 <label class="sr-only" for="catalog-search">Поиск</label>
-<input class="search" id="catalog-search" type="search" placeholder={`Найти ${noun}: например, «Луна»`} autocomplete="off" />
+<input class="search" id="catalog-search" type="search" placeholder={`Найти ${noun}: например, «${example}»`} autocomplete="off" />
+{hasGroups && (
+  <ul class="catalog-jump" aria-label="Разделы каталога">
+    <li><a class="chip" href="#catalog-main"><b>{mainTitle}</b><span class="n">· {items.length}</span></a></li>
+    <li><a class="chip" href="#catalog-politics"><b>Политика и заговоры</b><span class="n">· {politics.length}</span></a></li>
+  </ul>
+)}
 {[{ list: items, group: null }, { list: politics, group: 'politics' }].filter(({ list }) => list.length > 0).map(({ list, group }) => (
-  <section class="catalog-group" data-group={group ?? 'main'} aria-labelledby={group ? 'catalog-politics' : undefined}>
+  <section class="catalog-group" data-group={group ?? 'main'} aria-labelledby={group ? 'catalog-politics' : hasGroups ? 'catalog-main' : undefined}>
+    {!group && hasGroups && <h2 id="catalog-main">{mainTitle}</h2>}
     {group === 'politics' && (
       <>
-        <h2 id="catalog-politics">Политика и заговоры (лекция 5)</h2>
+        <h2 id="catalog-politics">Политика и заговоры (лекция&nbsp;5)</h2>
         <p class="calm-note">Своей позиции по политике у нас нет: проверяем только факты — даты, цитаты, документы.</p>
       </>
     )}

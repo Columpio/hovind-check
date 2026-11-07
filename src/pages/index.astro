@@ -24,7 +24,7 @@ const startHere = withFrequency('arguments').slice(0, 6);
     </p>
 
     <h2>Начните отсюда</h2>
-    <p>Доводы, которые Ховинд повторяет чаще всего.</p>
+    <p>Доводы, которые Ховинд повторяет чаще всего. Число — сколько раз довод звучит в лекциях.</p>
     <ol class="freq start-here">
       {startHere.map(({ article, count }) => (
         <li>
@@ -36,7 +36,7 @@ const startHere = withFrequency('arguments').slice(0, 6);
         </li>
       ))}
     </ol>
-    <p class="meta"><a href={`${base}arguments/`}>Все доводы →</a></p>
+    <p class="more-link"><a class="btn" href={`${base}arguments/`}>Все доводы →</a></p>
 
     <h2>Лекции и фильм</h2>
     <LectureCards />

@@ -23,8 +23,8 @@ const WORLDVIEW = 'https://www.youtube.com/playlist?list=PLdHB3SMueff-Ppt_hcyYE-
           <div class="cv-text">
             {v.note && <p class="cv-note">{v.note}</p>}
             <p class="cv-title">
-              <a href={`https://www.youtube.com/watch?v=${v.id}&t=${v.t}s`} target="_blank" rel="noopener">{v.title}</a>
-              <span class="cv-time">· {formatTime(v.t)}</span>
+              <a href={`https://www.youtube.com/watch?v=${v.id}&t=${v.t}s`} target="_blank" rel="noopener">{v.title}</a>{' '}
+              <span class="cv-time" style="white-space:nowrap">· {formatTime(v.t)}</span>
             </p>
           </div>
         </li>

@@ -47,6 +47,11 @@
 .player-bar .spacer { flex: 1; }
 .player-note { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); padding: 0 12px 12px; margin: 0; }
 .player-bar .btn { white-space: nowrap; }
+/* На узком экране у «Сейчас звучит» остаётся иконка (текст — для чтения с экрана), чтобы «Свернуть» помещалась. */
+@media (max-width: 480px) {
+  #to-current { min-width: var(--tap); padding: 0; }
+  #to-current .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 .player-bar .mini-toggle { display: none; }
 
 @media (max-width: 979px) {
@@ -86,7 +91,9 @@
   .tools-title { margin: 0; }
   .filters, .tools-actions { grid-column: 1 / -1; }
   /* Фильтры — одна строка с прокруткой вбок: не отнимают экран у разбора. */
-  .filters { display: flex; gap: 6px; overflow-x: auto; margin: 8px -12px 0; padding: 0 12px 2px; scrollbar-width: none; }
+  .filters { display: flex; gap: 6px; overflow-x: auto; margin: 8px -12px 0; padding: 0 40px 2px 12px; scrollbar-width: none; }
+  /* Затухание справа подсказывает, что ряд оценок продолжается; отступ справа даёт докрутить до последнего. */
+  .filters { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
   .filters::-webkit-scrollbar { display: none; }
   .filter { flex: none; padding: 0 12px 0 10px; border-radius: 999px; border-left-width: 1px; border-color: var(--c); align-content: center; }
   .filter[aria-pressed='false'] { border-color: var(--line); }
@@ -103,8 +110,11 @@
 }
 
 /* Утверждение: одна фирменная полоса оценки слева, без лишних рамок и плашек. */
-.claims { display: grid; gap: 14px; }
+/* minmax(0, 1fr): широкая таблица или схема во вставке не распирает колонку шире экрана. */
+.claims { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.claims-col { min-width: 0; }
 .claim {
+  min-width: 0;
   background: var(--paper); border-left: 5px solid var(--c); border-radius: 4px var(--radius) var(--radius) 4px;
   box-shadow: var(--shadow); padding: 10px 14px 14px 16px; scroll-margin-top: calc(var(--header-h) + 16px);
 }
@@ -171,7 +181,7 @@
 .inset-title { font-family: var(--font-ui); font-weight: 650; color: var(--accent); }
 .inset-summary { font-size: 0.95rem; color: var(--ink-2); }
 .inset > .prose { padding: 0 14px; }
-.inset-link { display: inline-block; margin: 4px 14px 12px; font-family: var(--font-ui); font-size: 0.84rem; }
+.inset-link { display: inline-flex; align-items: center; min-height: var(--tap); margin: 0 14px 4px; font-family: var(--font-ui); font-size: 0.84rem; }
 /* Тихая ссылка под вставками: заметна, но не спорит с разбором. */
 .claim-feedback {
   display: inline-flex; align-items: center; min-height: var(--tap); margin-top: 6px;

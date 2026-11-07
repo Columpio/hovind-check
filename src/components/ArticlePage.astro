@@ -17,10 +17,14 @@ const otherKind = kind === 'arguments' ? 'rhetoric' : 'arguments';
 const catalogTitle = kind === 'arguments' ? 'Каталог доводов' : 'Риторические приёмы';
 const relTitle = kind === 'arguments' ? 'Какими приёмами Ховинд подкрепляет этот довод' : 'В каких доводах встречается этот приём';
 const together = (n: number) => `вместе ${n} ${pluralRu(n, 'раз', 'раза', 'раз')}`;
+// Длинный список мест сворачиваем: иначе до конца страницы на телефоне десятки экранов.
+const OCC_SHOWN = 6;
+const occFirst = occ.length > OCC_SHOWN + 2 ? occ.slice(0, OCC_SHOWN) : occ;
+const occRest = occ.length > OCC_SHOWN + 2 ? occ.slice(OCC_SHOWN) : [];
 ---
 <Base title={article.title} description={article.summary} section={kind}>
   <div class="wrap narrow">
-    <p class="meta"><a href={`${base}${kind}/`}>← {catalogTitle}</a></p>
+    <p class="meta"><a class="back-link" href={`${base}${kind}/`}>← {catalogTitle}</a></p>
     <h1>{article.title}</h1>
     <p class="lead">{article.summary}</p>
     {article.pending
@@ -67,19 +71,31 @@ const together = (n: number) => `вместе ${n} ${pluralRu(n, 'раз', 'ра
     {occ.length === 0 ? (
       <p class="meta">Пока не отмечено ни в одной лекции.</p>
     ) : (
-      <ul class="occ">
-        {occ.map(({ lecture, claim }) => (
-          <li>
-            <span class="where">
-              <a href={`${base}lectures/${lecture.slug}/#t=${timeFragment(claim.start)}`}>
-                {lectureLabel(lecture)}, {formatTime(claim.start)}
-              </a>
-              <RatingPill rating={claim.rating} />
-            </span>
-            <q>{claim.text}</q>
-          </li>
-        ))}
-      </ul>
+      <>
+        {[occFirst, occRest].filter((list) => list.length > 0).map((list, i) => {
+          const items = (
+            <ul class="occ">
+              {list.map(({ lecture, claim }) => (
+                <li>
+                  <span class="where">
+                    <a class="occ-link" href={`${base}lectures/${lecture.slug}/#t=${timeFragment(claim.start)}`}>
+                      {lectureLabel(lecture)}, {formatTime(claim.start)}
+                    </a>
+                    <RatingPill rating={claim.rating} />
+                  </span>
+                  <q>{claim.text}</q>
+                </li>
+              ))}
+            </ul>
+          );
+          return i === 0 ? items : (
+            <details class="occ-more">
+              <summary class="btn">Показать все {occ.length}</summary>
+              {items}
+            </details>
+          );
+        })}
+      </>
     )}
   </div>
 </Base>

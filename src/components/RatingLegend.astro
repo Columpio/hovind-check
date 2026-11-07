@@ -14,8 +14,11 @@ import { RATINGS, RATING_ORDER } from '../lib/data';
   .legend-list { display: grid; grid-template-columns: max-content 1fr; gap: 10px 14px; margin: 0; align-items: baseline; }
   .legend-list div { display: contents; }
   .legend-list dd { margin: 0; color: var(--ink-2); font-family: var(--font-ui); font-size: 0.86rem; }
+  /* На телефоне пара «плашка — описание» видна как единое целое: внутри тесно, между парами просторно. */
   @media (max-width: 520px) {
-    .legend-list { grid-template-columns: 1fr; gap: 4px; }
-    .legend-list dd { margin-bottom: 8px; }
+    .legend-list { grid-template-columns: 1fr; gap: 0; }
+    .legend-list div { display: block; }
+    .legend-list div + div { margin-top: 16px; }
+    .legend-list dd { margin-top: 4px; font-family: var(--font-text); font-size: 0.95rem; }
   }
 </style>
