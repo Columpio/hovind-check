@@ -52,7 +52,8 @@ for (const c of claims.items) {
   });
 }
 
-// Ссылка #t=…: открыть страницу на этом утверждении и поставить видео на этот момент.
+// Ссылка #t=…: открыть страницу на этом утверждении и поставить видео на этот момент без запуска:
+// видео включается только по нажатию на тайм-код (решение владельца).
 // Первая прокрутка мгновенная: плавная в фоновой вкладке не срабатывает.
 const initial = parseFragment(location.hash);
 const initialClaim = initial === null ? null : claims.at(initial);
@@ -61,15 +62,14 @@ if (initialClaim) {
   // Браузер сам прокручивает к id из адреса после загрузки и прячет карточку под прилипшим плеером: повторяем с отступом.
   addEventListener('load', () => requestAnimationFrame(() => claims.reveal(initialClaim, 'auto')), { once: true });
 }
-// Автозапуск со звуком браузеры часто запрещают; тогда видео просто встанет на нужную секунду.
-player.start(player.platform, initial ?? 0, initial !== null);
+player.start(player.platform, initial ?? 0, false);
 
 addEventListener('hashchange', () => {
   const t = parseFragment(location.hash);
   const c = t === null ? null : claims.at(t);
   if (!c || t === null) return;
   claims.reveal(c, 'smooth');
-  player.seek(t);
+  player.cue(t);
 });
 
 // Подсветка утверждения, которое сейчас звучит.

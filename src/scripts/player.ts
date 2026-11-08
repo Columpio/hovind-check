@@ -6,7 +6,8 @@ export type PlatformName = 'youtube' | 'rutube';
 export type TimeEvent = CustomEvent<number | null>;
 
 interface Engine {
-  seek(t: number): void;
+  /** Перемотать; play — ещё и включить. */
+  seek(t: number, play: boolean): void;
   current(): number | null;
   destroy(): void;
 }
@@ -14,6 +15,8 @@ interface Engine {
 interface YTPlayer {
   seekTo(seconds: number, allowSeekAhead: boolean): void;
   playVideo(): void;
+  pauseVideo(): void;
+  getPlayerState(): number;
   getCurrentTime(): number;
   destroy(): void;
 }
@@ -114,11 +117,18 @@ export class LecturePlayer extends EventTarget {
     this.engine = p === 'youtube' ? this.youtube(at, autoplay) : this.rutube(at, autoplay);
   }
 
-  /** Перейти к моменту лекции и запустить видео. */
+  /** Перейти к моменту лекции и запустить видео (только по нажатию на тайм-код). */
   seek(lectureTime: number): void {
     this.lastTime = lectureTime;
     if (!this.engine) return this.start(this.platform, lectureTime, true);
-    this.engine.seek(toPlatform(this.steps[this.platform], lectureTime));
+    this.engine.seek(toPlatform(this.steps[this.platform], lectureTime), true);
+  }
+
+  /** Перемотать без запуска: ссылка #t=… и цепочка не должны включать звук. */
+  cue(lectureTime: number): void {
+    this.lastTime = lectureTime;
+    if (!this.engine) return this.start(this.platform, lectureTime, false);
+    this.engine.seek(toPlatform(this.steps[this.platform], lectureTime), false);
   }
 
   private emitTime(platformTime: number | null): void {
@@ -164,7 +174,7 @@ export class LecturePlayer extends EventTarget {
     const slot = this.freshSlot();
     let player: YTPlayer | null = null;
     let ready = false;
-    let queued: number | null = null;
+    let queued: { t: number; play: boolean } | null = null;
     let ticker = 0;
     let destroyed = false;
     const stopTicker = () => {
@@ -181,8 +191,9 @@ export class LecturePlayer extends EventTarget {
             onReady: () => {
               ready = true;
               if (queued !== null) {
-                player!.seekTo(queued, true);
-                player!.playVideo();
+                player!.seekTo(queued.t, true);
+                if (queued.play) player!.playVideo();
+                else player!.pauseVideo();
                 queued = null;
               }
             },
@@ -205,11 +216,14 @@ export class LecturePlayer extends EventTarget {
       },
     );
     return {
-      seek(t) {
+      seek(t, play) {
         if (ready && player) {
+          // seekTo у незапущенного видео сам включает его: ставим паузу, если играть не просили.
+          const wasPlaying = player.getPlayerState() === 1;
           player.seekTo(t, true);
-          player.playVideo();
-        } else queued = t;
+          if (play) player.playVideo();
+          else if (!wasPlaying) player.pauseVideo();
+        } else queued = { t, play };
       },
       current: () => (ready && player ? player.getCurrentTime() : null),
       destroy: () => {
@@ -232,7 +246,8 @@ export class LecturePlayer extends EventTarget {
     slot.replaceWith(iframe);
     let time: number | null = null;
     let ready = false;
-    let queued: number | null = null;
+    let playing = false;
+    let queued: { t: number; play: boolean } | null = null;
     const send = (type: string, data: object = {}) => iframe.contentWindow?.postMessage(JSON.stringify({ type, data }), '*');
     const onMessage = (e: MessageEvent) => {
       if (e.source !== iframe.contentWindow) return;
@@ -245,8 +260,8 @@ export class LecturePlayer extends EventTarget {
       if (m?.type === 'player:ready' || m?.type === 'player:init') {
         ready = true;
         if (queued !== null) {
-          send('player:setCurrentTime', { time: queued });
-          send('player:play');
+          send('player:setCurrentTime', { time: queued.t });
+          if (queued.play) send('player:play');
           queued = null;
         }
       }
@@ -254,18 +269,22 @@ export class LecturePlayer extends EventTarget {
         time = Number(m.data?.time);
         this.emitTime(time);
       }
-      if (m?.type === 'player:changeState' && m.data?.state !== 'playing') {
-        time = null;
-        this.emitTime(null);
+      if (m?.type === 'player:changeState') {
+        playing = m.data?.state === 'playing';
+        if (!playing) {
+          time = null;
+          this.emitTime(null);
+        }
       }
     };
     window.addEventListener('message', onMessage);
     return {
-      seek(t) {
+      seek(t, play) {
         if (ready) {
           send('player:setCurrentTime', { time: t });
-          send('player:play');
-        } else queued = t;
+          if (play) send('player:play');
+          else if (!playing) send('player:pause');
+        } else queued = { t, play };
       },
       current: () => time,
       destroy: () => window.removeEventListener('message', onMessage),
