@@ -25,7 +25,6 @@ summary: "Пирамиды, Баальбек, «золотой самолёти�
 
 Фигурки отливали так же, как другие украшения: лепили из воска, обмазывали глиной, выплавляли воск и заливали золото.
 
-<figure class="diagram"><img src="/hovind-check/images/ancient-advanced-civilization/flying-fish-pendants.jpg" alt="Три золотые подвески в виде летучих рыб: тело заканчивается головой с открытой пастью, по бокам широкие плавники-крылья с узором из ромбов и кружков, сзади длинный хвост с ромбовидной решёткой" loading="lazy" width="500" height="267" style="width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border-radius:8px"><figcaption>Похожие подвески, предположительно из культуры Толима (Колумбия): «летучие рыбы» с плавниками-крыльями. Датируют их иначе, чем описанные выше, и это фигурки животных. Самолётом их считать не на что: это рыбы с крыльями-плавниками. Фото: Metropolitan Museum of Art, CC0, <a href="https://commons.wikimedia.org/wiki/File:Flying-Fish_Pendant_MET_vs1991419242526.jpg">Wikimedia Commons</a>.</figcaption></figure>
 
 ### «Вертолёт» в Абидосе
 
@@ -39,9 +38,17 @@ summary: "Пирамиды, Баальбек, «золотой самолёти�
 
 Самый большой блок, около 1650 тонн, так и остался там: видимо, из-за трещины ([Archaeology Magazine, 2014](https://archaeology.org/news/2014/12/02/141202-baalbek-biggest-boulder/), на англ.).
 
+<figure class="diagram"><img src="/hovind-check/images/ancient-advanced-civilization/baalbek-quarry.jpg" alt="Огромный обтёсанный каменный блок лежит наклонно в древней каменоломне; рядом стоят люди, которые рядом с ним кажутся крошечными; вокруг другие обработанные камни" loading="lazy" width="1000" height="666" style="width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border-radius:8px">
+  <figcaption>Древняя каменоломня Баальбека (Ливан): один из огромных блоков, которые римские строители так и не вывезли. Рядом стоят люди — видно, какой он большой. Фото: Choinowski, CC BY-SA 4.0, <a href="https://commons.wikimedia.org/wiki/File:Stone_of_the_Pregnant_Woman_in_Baalbek,_Beirut.jpg">Wikimedia Commons</a>.</figcaption>
+</figure>
+
 ### Камни Перу
 
 Стены крепости Саксайуаман над Куско построили инки в XV веке, самые большие камни в них высотой около 8 м ([Британская энциклопедия](https://www.britannica.com/place/Sacsayhuaman), на англ.). Камень в 20 000 тонн был бы кубом примерно 20 × 20 × 20 м, таких в стенах нет.
+
+<figure class="diagram"><img src="/hovind-check/images/ancient-advanced-civilization/sacsayhuaman-walls.jpg" alt="Стены крепости Саксайуаман: огромные серые камни разной формы плотно подогнаны друг к другу без раствора, стена идёт уступами вдаль" loading="lazy" width="1000" height="612" style="width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border-radius:8px">
+  <figcaption>Стены Саксайуамана над Куско (Перу). Камни огромные и плотно подогнаны, но это обычный камень, который инки обтёсывали и подгоняли вручную. Фото: Bcasterline, общественное достояние, <a href="https://commons.wikimedia.org/wiki/File:Walls_at_Sacsayhuaman.jpg">Wikimedia Commons</a>.</figcaption>
+</figure>
 
 ### Линии Наски
 
