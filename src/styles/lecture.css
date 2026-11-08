@@ -47,10 +47,10 @@
 .player-bar .spacer { flex: 1; }
 .player-note { font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted); padding: 0 12px 12px; margin: 0; }
 .player-bar .btn { white-space: nowrap; }
-/* На узком экране у «Сейчас звучит» остаётся иконка (текст — для чтения с экрана), чтобы «Свернуть» помещалась. */
+/* На узком экране подпись короче («К месту»), чтобы «Свернуть» помещалась; полное название — в aria-label. */
 @media (max-width: 480px) {
-  #to-current { min-width: var(--tap); padding: 0; }
-  #to-current .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #to-current { padding: 0 10px; }
+  #to-current .lbl-long { display: none; }
 }
 .player-bar .mini-toggle { display: none; }
 

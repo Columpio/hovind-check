@@ -285,7 +285,8 @@ h3 { font-size: 1.05rem; }
   font-family: var(--font-ui); font-size: 0.8rem; font-weight: 550;
   border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink-2);
 }
-.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+/* Только на устройствах с настоящим наведением: на телефоне :hover «прилипает» после нажатия. */
+@media (hover: hover) { .btn:hover:not(:disabled):not([aria-pressed='true']) { border-color: var(--accent); color: var(--accent); } }
 .btn:disabled { opacity: 0.5; cursor: default; }
 .btn[aria-pressed='true'] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 

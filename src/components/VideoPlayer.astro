@@ -29,11 +29,11 @@ const feedback = getFeedback();
       <button type="button" data-platform="rutube" disabled={!rtId} aria-pressed="false">RuTube</button>
     </div>
     <span class="spacer"></span>
-    <button type="button" class="btn" id="to-current" disabled title="Прокрутить разбор к тому, что сейчас звучит в видео">
+    <button type="button" class="btn" id="to-current" title="Прокрутить разбор к месту, до которого дошло видео" aria-label="К месту видео в разборе">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
-      <span class="lbl">Сейчас звучит</span>
+      <span class="lbl" aria-hidden="true">К месту<span class="lbl-long"> видео</span></span>
     </button>
-    <button type="button" class="btn mini-toggle" id="mini-toggle" aria-pressed="false" aria-controls="player" title="Свернуть или развернуть видео">
+    <button type="button" class="btn mini-toggle" id="mini-toggle" aria-expanded="true" aria-controls="player" title="Свернуть или развернуть видео">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
       <span class="when-open">Свернуть</span><span class="when-mini" hidden>Видео</span>
     </button>
