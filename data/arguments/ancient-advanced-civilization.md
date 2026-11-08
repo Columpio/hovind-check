@@ -47,7 +47,7 @@ summary: "Пирамиды, Баальбек, «золотой самолёти�
 Стены крепости Саксайуаман над Куско построили инки в XV веке, самые большие камни в них высотой около 8 м ([Британская энциклопедия](https://www.britannica.com/place/Sacsayhuaman), на англ.). Камень в 20 000 тонн был бы кубом примерно 20 × 20 × 20 м, таких в стенах нет.
 
 <figure class="diagram"><img src="/hovind-check/images/ancient-advanced-civilization/sacsayhuaman-walls.jpg" alt="Стены крепости Саксайуаман: огромные серые камни разной формы плотно подогнаны друг к другу без раствора, стена идёт уступами вдаль" loading="lazy" width="1000" height="612" style="width:100%;max-width:420px;height:auto;display:block;margin:0 auto;border-radius:8px">
-  <figcaption>Стены Саксайуамана над Куско (Перу). Камни огромные и плотно подогнаны, но это обычный камень, который инки обтёсывали и подгоняли вручную. Фото: Bcasterline, общественное достояние, <a href="https://commons.wikimedia.org/wiki/File:Walls_at_Sacsayhuaman.jpg">Wikimedia Commons</a>.</figcaption>
+  <figcaption>Стены Саксайуамана над Куско (Перу). Камни огромные и плотно подогнаны, но это обычный камень, который инки обтёсывали и подгоняли вручную. Фото: Bcasterline (английская Википедия), общественное достояние, <a href="https://commons.wikimedia.org/wiki/File:Walls_at_Sacsayhuaman.jpg">Wikimedia Commons</a>.</figcaption>
 </figure>
 
 ### Линии Наски
