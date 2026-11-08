@@ -4,7 +4,6 @@
   python scripts/feedback.py pull --csv FILE.csv    # то же из выгрузки таблицы, без API
   python scripts/feedback.py pending [--json]       # замечания, к которым агент ещё не предложил варианты
   python scripts/feedback.py fill FILE.json         # записать варианты агента в inbox.html (формат — в SKILL.md)
-  python scripts/feedback.py serve [--port 8770]    # открыть inbox.html на localhost; ответы пишутся в answers.json
   python scripts/feedback.py answers [--json]       # ответы владельца: что применить, что обсудить
   python scripts/feedback.py mark KEY STATUS "ответ"   # done | rejected | duplicate | question | new
   python scripts/feedback.py push                   # записать статусы в таблицу (столбцы «Статус (агент)», «Ответ агента»)
@@ -29,7 +28,6 @@ import sys
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import yaml
@@ -268,9 +266,6 @@ def render(state: dict) -> None:
     shell = SHELL.read_text(encoding='utf-8')
     page = re.sub(r'<!-- ITEMS -->.*<!-- /ITEMS -->', lambda _: f'<!-- ITEMS -->\n{cards}\n<!-- /ITEMS -->', shell, flags=re.S)
     INBOX.write_text(page, encoding='utf-8')
-    launcher = INBOX_DIR / 'open-inbox.cmd'
-    if not launcher.exists():
-        launcher.write_text('@echo off\r\ncd /d "%~dp0.."\r\npython scripts\\feedback.py serve\r\n', encoding='utf-8')
     answers = load_answers()
     keep = {k for k, _ in open_items(state)}
     if set(answers['answers']) - keep:
@@ -479,60 +474,6 @@ def cmd_list(args) -> None:
         show(k, v, mates)
 
 
-def cmd_serve(args) -> None:
-    render(load_state())
-    dist = ROOT / 'dist'
-
-    class Handler(SimpleHTTPRequestHandler):
-        def log_message(self, *a):
-            pass
-
-        def send_bytes(self, body: bytes, ctype: str, code: int = 200):
-            self.send_response(code)
-            self.send_header('Content-Type', ctype)
-            self.send_header('Cache-Control', 'no-store')
-            self.send_header('Content-Length', str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-
-        def do_GET(self):
-            path = self.path.split('?')[0].split('#')[0]
-            if path in ('/', '/inbox.html'):
-                return self.send_bytes(INBOX.read_bytes(), 'text/html; charset=utf-8')
-            if path == '/answers':
-                return self.send_bytes(json.dumps(load_answers(), ensure_ascii=False).encode(), 'application/json; charset=utf-8')
-            if path.startswith('/hovind-check/') and dist.exists():
-                self.path = path[len('/hovind-check'):]
-                return super().do_GET()
-            self.send_bytes(b'not found', 'text/plain', 404)
-
-        def translate_path(self, path):
-            target = (dist / urllib.parse.unquote(path).lstrip('/')).resolve()
-            return str(target / 'index.html' if target.is_dir() else target)
-
-        def do_POST(self):
-            if self.path != '/answers':
-                return self.send_bytes(b'not found', 'text/plain', 404)
-            payload = json.loads(self.rfile.read(int(self.headers.get('Content-Length', 0))).decode('utf-8'))
-            ANSWERS.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
-            self.send_bytes(b'{"ok":true}', 'application/json')
-
-    for p in range(args.port, args.port + 20):
-        try:
-            srv = ThreadingHTTPServer(('127.0.0.1', p), Handler)
-            break
-        except OSError:
-            continue
-    else:
-        sys.exit('Нет свободного порта.')
-    url = f'http://localhost:{srv.server_address[1]}/'
-    print(url, flush=True)
-    if not args.no_browser:
-        import webbrowser
-        webbrowser.open(url)
-    srv.serve_forever()
-
-
 def main() -> None:
     sys.stdout.reconfigure(encoding='utf-8')
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -545,7 +486,6 @@ def main() -> None:
     s = sub.add_parser('push'); s.set_defaults(fn=cmd_push)
     s = sub.add_parser('list'); s.add_argument('--all', action='store_true'); s.set_defaults(fn=cmd_list)
     s = sub.add_parser('render'); s.set_defaults(fn=lambda a: render(load_state()))
-    s = sub.add_parser('serve'); s.add_argument('--port', type=int, default=8770); s.add_argument('--no-browser', action='store_true'); s.set_defaults(fn=cmd_serve)
     args = p.parse_args()
     args.fn(args)
 

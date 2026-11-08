@@ -32,7 +32,7 @@ header.top{position:sticky;top:0;z-index:5;background:var(--page);border-bottom:
 header.top .wrap{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;padding:10px 16px}
 header.top strong{font-size:1.05rem}
 .stat{font-size:.9rem;color:var(--muted);white-space:nowrap}.stat b{color:var(--ink)}
-#save{margin-left:auto}#save.err{color:var(--r-red)}
+#savebtn{margin-left:auto;font-size:1.05rem;font-weight:650;padding:12px 20px;min-height:52px;border-radius:12px;border:2px solid var(--accent);background:var(--accent);color:var(--paper)}#savebtn.dirty{background:var(--r-red);border-color:var(--r-red);color:#fff}#save{width:100%}#save.err{color:var(--r-red);font-weight:600}
 label.flt{font-size:.9rem;white-space:nowrap;cursor:pointer}
 h1{font-size:1.45rem;margin:1em 0 .3em}.intro{color:var(--muted);margin:0 0 1em}
 .empty{background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:24px;text-align:center;color:var(--muted)}
@@ -77,12 +77,12 @@ button{font:inherit;font-size:.9rem;padding:5px 12px;border-radius:8px;border:1p
 <span class="stat">решено <b id="n-done">0</b></span>
 <span class="stat">обсудить <b id="n-disc">0</b></span>
 <label class="flt"><input type="checkbox" id="only"> только без ответа</label>
+<button type="button" id="savebtn">Сохранить ответы</button>
 <span class="stat" id="save">…</span>
-<button type="button" id="dl" title="Скачать ответы файлом, если сервер не запущен">Скачать ответы</button>
 </div></header>
 <main class="wrap">
 <h1>Замечания читателей</h1>
-<p class="intro">Выберите по каждому замечанию один вариант: предложенный агентом, свой или «Давайте обсудим». Ответы сохраняются сами. Когда закончите, скажите агенту: «Примени ответы по замечаниям». Отработанные замечания исчезнут отсюда после публикации правок.</p>
+<p class="intro">Выберите по каждому замечанию один вариант: предложенный агентом, свой или «Давайте обсудим». Ответы хранятся в этом браузере, пока вы не нажмёте «Сохранить ответы» (или Ctrl+S): в первый раз откроется окно сохранения — сохраните <code>answers.json</code> в папку <code>feedback-inbox</code>, дальше кнопка перезаписывает тот же файл. Когда закончите, скажите агенту: «Примени ответы по замечаниям». Отработанные замечания исчезнут отсюда после публикации правок.</p>
 <div id="items">
 <!-- ITEMS -->
 <!-- /ITEMS -->
@@ -94,7 +94,6 @@ const STORE = 'hovind-feedback-inbox';
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let state = {answers: {}};
-let server = location.protocol.startsWith('http');
 const items = [...document.querySelectorAll('article.item')];
 
 function answerOf(item){
@@ -155,32 +154,48 @@ function counters(){
   items.forEach(i => i.classList.toggle('hidden', only && isAnswered(answerOf(i)) && !i.contains(document.activeElement)));
   $('#none').classList.toggle('hidden', items.length > 0);
 }
-let timer;
+const SAVED = STORE + ':saved';
+let dirty = false, fileHandle = null;
 function save(){
   state.updated = new Date().toISOString();
   localStorage.setItem(STORE, JSON.stringify(state));
-  if (!server) return status('сохранено только в браузере: запустите open-inbox.cmd или нажмите «Скачать ответы»', true);
-  status('сохраняю…'); clearTimeout(timer);
-  timer = setTimeout(() => fetch('answers', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(state)})
-    .then(r => { if (!r.ok) throw 0; status('сохранено ✓'); })
-    .catch(() => status('сервер недоступен — ответы пока в браузере', true)), 400);
+  dirty = true; $('#savebtn').classList.add('dirty');
+  status('есть несохранённые ответы — нажмите «Сохранить ответы»', true);
+}
+function idb(){ return new Promise((ok, no) => { const r = indexedDB.open('feedback-inbox', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
+async function kvGet(k){ const d = await idb(); return new Promise((ok, no) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result); q.onerror = () => no(q.error); }); }
+async function kvSet(k, v){ const d = await idb(); return new Promise((ok, no) => { const tx = d.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => ok(); tx.onerror = () => no(tx.error); }); }
+function saved(where){ dirty = false; localStorage.setItem(SAVED, JSON.stringify(state)); $('#savebtn').classList.remove('dirty'); status('сохранено: ' + where); }
+async function saveFile(){
+  const text = JSON.stringify(state, null, 2);
+  if (window.showSaveFilePicker) {
+    try {
+      let h = fileHandle || await kvGet('answers').catch(() => null);
+      if (h && (await h.queryPermission({mode: 'readwrite'})) !== 'granted' && (await h.requestPermission({mode: 'readwrite'})) !== 'granted') h = null;
+      if (!h) { h = await showSaveFilePicker({suggestedName: 'answers.json', types: [{description: 'Ответы по замечаниям', accept: {'application/json': ['.json']}}]}); await kvSet('answers', h); }
+      fileHandle = h;
+      const w = await h.createWritable(); await w.write(text); await w.close();
+      return saved('файл ' + h.name);
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], {type: 'application/json'}));
+  a.download = 'answers.json'; document.body.append(a); a.click(); a.remove();
+  saved('скачан answers.json — переложите его в папку feedback-inbox');
 }
 function status(t, err){ const s = $('#save'); s.textContent = t; s.classList.toggle('err', !!err); }
 document.addEventListener('change', onInput); document.addEventListener('input', onInput);
 $('#only').addEventListener('change', counters);
-$('#dl').addEventListener('click', () => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'}));
-  a.download = 'answers.json'; a.click();
-});
-(async () => {
+$('#savebtn').addEventListener('click', saveFile);
+addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveFile(); } });
+// Свой диалог при закрытии браузер не покажет, поэтому просим его стандартное «Покинуть страницу?».
+addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+(() => {
   let local = null; try { local = JSON.parse(localStorage.getItem(STORE)); } catch {}
-  let remote = null;
-  if (server) { try { remote = await (await fetch('answers', {cache: 'no-store'})).json(); } catch { server = false; } }
-  const pick = [remote, local].filter(x => x && x.answers).sort((a, b) => (b.updated || '').localeCompare(a.updated || ''))[0];
-  if (pick) state = pick;
+  if (local && local.answers) state = local;
   items.forEach(build); counters();
-  status(server ? 'ответы сохраняются автоматически' : 'сервер не запущен: ответы только в браузере', !server);
-  if (server && pick === local && local && (!remote || local.updated > (remote.updated || ''))) save();
+  dirty = !!local && JSON.stringify(local) !== localStorage.getItem(SAVED);
+  if (dirty) { $('#savebtn').classList.add('dirty'); status('есть несохранённые ответы — нажмите «Сохранить ответы»', true); }
+  else status(local ? 'все ответы сохранены в файл' : 'ответов пока нет');
 })();
 </script></body></html>

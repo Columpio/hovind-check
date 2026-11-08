@@ -8,6 +8,7 @@ research/
 
 # Owner's task list and agent rules: personal, local only.
 TODO.md
+TODO.html
 AGENTS.md
 # Agent guides (local); DESIGN.md stays public.
 docs/*
